@@ -35,6 +35,7 @@ public class Edge {
     }
 
     public String toString(){
-        return null;
+        return "Edge{" + "destination " + this.destination + ", name=" + this.name + '\'' + ", distance" + this.weight + "}";
     }
 }
+
