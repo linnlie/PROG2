@@ -1,3 +1,10 @@
+import java.util.Objects;
+
+// PROG2 VT2023, Inl ̈amningsuppgift, del 1 // Grupp 385
+// Linn Li lili6794
+// Linus Levén lile6018
+// Nora Wennerberg nowe9092
+
 public class Edge {
     public int weight;
     public String name;
@@ -12,11 +19,11 @@ public class Edge {
         this.weight = (int)weight;
     }
     public City getDestination(){
-        return null;
+        return this.destination;
     }
 
     public int getWeight(){
-        return 1;
+        return weight;
     }
 
     public void setWeight(int distance){
@@ -24,7 +31,7 @@ public class Edge {
     }
 
     public String getName(){
-        return null;
+        return this.name;
     }
 
     public String toString(){
