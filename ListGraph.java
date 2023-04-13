@@ -1,6 +1,7 @@
 import java.util.*;
 
-// PROG2 VT2023, Inl ̈amningsuppgift, del 1 // Grupp 385
+// PROG2 VT2023, Inlämningsuppgift, del 1 
+// Grupp 385
 // Linn Li lili6794
 // Linus Levén lile6018
 // Nora Wennerberg nowe9092
