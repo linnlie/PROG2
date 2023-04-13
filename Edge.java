@@ -1,6 +1,6 @@
 public class Edge {
     public int weight;
-    public string name;
+    public String name;
     private final City destination;
 
     public Edge(City destination, String name, double weight) {
@@ -9,25 +9,25 @@ public class Edge {
         if (Double.isNaN(weight)) {
             throw new IllegalArgumentException();
         }
-        this.weight = weight;
+        this.weight = (int)weight;
     }
     public City getDestination(){
         return null;
     }
 
     public int getWeight(){
-        return null;
+        return 1;
     }
 
     public void setWeight(int distance){
 
     }
 
-    public string getName(){
+    public String getName(){
         return null;
     }
 
-    public string toString(){
+    public String toString(){
         return null;
     }
 }

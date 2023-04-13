@@ -9,7 +9,7 @@ public class ListGraph {
 
     }
 
-    public void connect(City a, City b, string name, int distance){
+    public void connect(City a, City b, String name, int distance){
 
     }
 
@@ -33,7 +33,7 @@ public class ListGraph {
         return null;
     }
 
-    public string toString(){
+    public String toString(){
         return null;
     }
     public boolean pathExists(City a, City b){
