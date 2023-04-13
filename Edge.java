@@ -26,8 +26,8 @@ public class Edge {
         return weight;
     }
 
-    public void setWeight(int distance){
-
+    public void setWeight(int weight){
+        this.weight = weight;
     }
 
     public String getName(){
