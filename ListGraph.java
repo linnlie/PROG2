@@ -62,7 +62,13 @@ public class ListGraph<T> implements Graph<T> {
     }
 
     public void setConnectionWeight(City a, City b, int newDistance) {
-
+        if (!nodes.containsKey(a) || !nodes.containsKey(b)){ || !pathExists(a, b)){
+            throw new NoSuchElementException("Error: No such city or connection.");
+        } else if (getEdgeBetween(a, b) < 0){
+            throw new IllegalArgumentException("Error: Wheight is negative");
+        } else {
+            connect(a, b, "stad", newDistance);
+        }
     }
 
     public HashMap<City, Set<Edge>> getNodes() {
