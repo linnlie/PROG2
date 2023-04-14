@@ -13,8 +13,12 @@ public class ListGraph<T> implements Graph<T> {
         nodes.putIfAbsent(city, new HashSet<>());
     }
 
-    public void remove(City city) {
-
+    public void remove(City city){
+        if (nodes.containsKey(city)){
+            nodes.remove(city);
+        } else {
+            System.out.println("Error: No such city found.");
+        }
     }
 
     public void connect(City a, City b, String name, int distance) {
