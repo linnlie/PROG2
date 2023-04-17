@@ -62,13 +62,13 @@ public class ListGraph<T> implements Graph<T> {
     }
 
     public void setConnectionWeight(T cityA, T cityB, int newDistance) {
-        if (!nodes.containsKey(cityA) || !nodes.containsKey(cityB)) { ||!pathExists(cityA, cityB)){
+        if (!nodes.containsKey(cityA) || !nodes.containsKey(cityB) || !pathExists(cityA, cityB)){
             throw new NoSuchElementException("Error: No such city or connection.");
-        } else if (getEdgeBetween(cityA, cityB) < 0) {
+        } else if (getEdgeBetween(cityA, cityB).getWeight() < 0) {
             throw new IllegalArgumentException("Error: Wheight is negative");
         } else {
-            connect(cityA, cityB, "stad", newDistance);
-        }
+            Edge edge = getEdgeBetween(cityA, cityB);
+            edge.setWeight(newDistance);
         }
     }
 
