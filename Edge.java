@@ -1,16 +1,16 @@
 import java.util.Objects;
 
-// PROG2 VT2023, Inl ̈amningsuppgift, del 1 // Grupp 385
+// PROG2 VT2023, Inlämningsuppgift, del 1 // Grupp 385
 // Linn Li lili6794
 // Linus Levén lile6018
 // Nora Wennerberg nowe9092
 
-public class Edge {
+public class Edge<T> {
     public int weight;
     public String name;
-    private final City destination;
+    private final T destination;
 
-    public Edge(City destination, String name, double weight) {
+    public Edge(T destination, String name, double weight) {
         this.destination = Objects.requireNonNull(destination);
         this.name = Objects.requireNonNull(name);
         if (Double.isNaN(weight)) {
@@ -18,7 +18,7 @@ public class Edge {
         }
         this.weight = (int)weight;
     }
-    public City getDestination(){
+    public T getDestination(){
         return this.destination;
     }
 
