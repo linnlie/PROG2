@@ -67,9 +67,9 @@ public class ListGraph<T> implements Graph<T> {
         } else if (getEdgeBetween(a, b).getWeight() < 0){
             throw new IllegalArgumentException("Error: Wheight is negative");
         } else {
-            connect(a, b, "stad", newDistance); //Evig loop?
+            Edge edge = getEdgeBetween(a, b);
+            edge.setWeight(newDistance);
         }
-
     }
 
     public HashMap<City, Set<Edge>> getNodes() {
