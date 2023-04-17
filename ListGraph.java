@@ -106,7 +106,11 @@ public class ListGraph<T> implements Graph<T> {
     }
 
     public String toString() {
-        return null;
+        StringBuilder stringBuilder = new StringBuilder();
+        for (T city : nodes.keySet()){ //Går igenom alla nycklar (städer)
+            stringBuilder.append(city).append(":").append(nodes.get(city)).append("\n");
+        }
+        return stringBuilder.toString();
     }
 
     public boolean pathExists(T cityA, T cityB) {
