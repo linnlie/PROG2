@@ -64,7 +64,7 @@ public class ListGraph<T> implements Graph<T> {
     public void setConnectionWeight(City a, City b, int newDistance) {
         if (!nodes.containsKey(a) || !nodes.containsKey(b) || !pathExists(a, b)){
             throw new NoSuchElementException("Error: No such city or connection.");
-        } else if (getEdgeBetween(a, b) < 0){
+        } else if (getEdgeBetween(a, b).getWeight() < 0){
             throw new IllegalArgumentException("Error: Wheight is negative");
         } else {
             connect(a, b, "stad", newDistance); //Evig loop?
@@ -89,7 +89,16 @@ public class ListGraph<T> implements Graph<T> {
         return new HashSet<>(edges); //Returnerar kopia av samlingen av alla kanter
     }
 
-    public Edge getEdgeBetween(City a, City b) {
+    public Edge getEdgeBetween(City cityFrom, City cityTo) {
+        if (!nodes.containsKey(cityFrom) || !nodes.containsKey(cityTo)){
+            throw new NoSuchElementException("Error: No such city found.");
+        } else if (pathExists(cityFrom, cityTo)){
+            for (Edge edge : nodes.get(cityFrom)){
+                if (edge.getDestination().equals(cityTo)){
+                    return edge;
+                }
+            }
+        }
         return null;
     }
 
