@@ -7,22 +7,22 @@ import java.util.*;
 // Nora Wennerberg nowe9092
 
 public class ListGraph<T> implements Graph<T> {
-    private final Map<T, Set<Edge>> nodes = new HashMap<>();
+    private final Map<City, Set<Edge>> nodes = new HashMap<>();
 
-    public void add(T city) {
+    public void add(City city) {
         nodes.putIfAbsent(city, new HashSet<>());
     }
 
-    public void remove(T city) {
-        if (nodes.containsKey(city)) {
+    public void remove(City city){
+        if (nodes.containsKey(city)){
             nodes.remove(city);
         } else {
             System.out.println("Error: No such city found.");
         }
     }
 
-    public void connect(T cityA, T cityB, String name, int distance) {
-        if (!nodes.containsKey(cityA) || !nodes.containsKey(cityB)) {
+    public void connect(City a, City b, String name, int distance) {
+        if (!nodes.containsKey(a) || !nodes.containsKey(b)) {
             throw new NoSuchElementException("One or more cities not found.");
         }
 
@@ -30,59 +30,75 @@ public class ListGraph<T> implements Graph<T> {
             throw new IllegalArgumentException("Distance cannot be a negative number.");
         }
 
-        if (getEdgeBetween(cityA, cityB) != null) {
+        if (getEdgeBetween(a, b) != null) {
             throw new IllegalStateException("Connection already exists between " + a + " and " + b + ".");
         }
 
-        Set<Edge> aEdges = nodes.get(cityA);
-        Set<Edge> bEdges = nodes.get(cityB);
+        Set<Edge> aEdges = nodes.get(a);
+        Set<Edge> bEdges = nodes.get(b);
 
         //Gör grafen oriktad, pga skapar kant från a till b samt kant från b till a
-        aEdges.add(new Edge(cityB, name, distance));
-        bEdges.add(new Edge(cityA, name, distance));
+        aEdges.add(new Edge(b, name, distance));
+        bEdges.add(new Edge(a, name, distance));
 
-        setConnectionWeight(cityA, cityB, distance);
+        setConnectionWeight(a, b, distance);
     }
 
-    public void disconnect(T cityA, T cityB) {
-        if (!nodes.containsKey(cityA) || !nodes.containsKey(cityB)) {
+    public void disconnect(City a, City b) {
+        if (!nodes.containsKey(a) || !nodes.containsKey(b)) {
             throw new NoSuchElementException("One or more cities not found.");
         }
 
-        Edge edge = getEdgeBetween(cityA, cityB);
+        Edge edge = getEdgeBetween(a, b);
         if (edge == null) {
-            throw new IllegalStateException("No edge between " + cityA + " and " + cityB + ".");
+            throw new IllegalStateException("No edge between " + a + " and " + b + ".");
         }
 
-        Set<Edge> aEdges = nodes.get(cityA);
-        Set<Edge> bEdges = nodes.get(cityB);
+        Set<Edge> aEdges = nodes.get(a);
+        Set<Edge> bEdges = nodes.get(b);
 
         aEdges.remove(edge);
         bEdges.remove(edge);
     }
 
-    public void setConnectionWeight(T cityA, T cityB, int newDistance) {
-        if (!nodes.containsKey(cityA) || !nodes.containsKey(cityB)) { ||!pathExists(cityA, cityB)){
+    public void setConnectionWeight(City a, City b, int newDistance) {
+        if (!nodes.containsKey(a) || !nodes.containsKey(b) || !pathExists(a, b)){
             throw new NoSuchElementException("Error: No such city or connection.");
-        } else if (getEdgeBetween(cityA, cityB) < 0) {
+        } else if (getEdgeBetween(a, b).getWeight() < 0){
             throw new IllegalArgumentException("Error: Wheight is negative");
         } else {
-            connect(cityA, cityB, "stad", newDistance);
+            connect(a, b, "stad", newDistance); //Evig loop?
         }
-        }
+
     }
 
-    public Set<T> getNodes() {
-        Set<T> nodesCopy = new HashSet<T>();
-        nodesCopy.addAll(nodes.keySet());
-        return nodesCopy;
-    }
-
-    public Collection<Edge<T>> getEdgesFrom(T city) {
+    public HashMap<City, Set<Edge>> getNodes() {
         return null;
     }
 
-    public Edge getEdgeBetween(T cityA, T cityB) {
+    public Set<Edge> getEdgesFrom(City city) {
+        Set<Edge> edges = new HashSet<>(); //Alla kanter från noden
+
+        if (!nodes.containsKey(city)){
+            throw new NoSuchElementException("Error: No such city.");
+        } else {
+            for (Edge e : nodes.get(city)){ //Lägger till kanterna från city i edges
+                edges.add(e);
+            }
+        }
+        return new HashSet<>(edges); //Returnerar kopia av samlingen av alla kanter
+    }
+
+    public Edge getEdgeBetween(City cityFrom, City cityTo) {
+        if (!nodes.containsKey(cityFrom) || !nodes.containsKey(cityTo)){
+            throw new NoSuchElementException("Error: No such city found.");
+        } else if (pathExists(cityFrom, cityTo)){
+            for (Edge edge : nodes.get(cityFrom)){
+                if (edge.getDestination().equals(cityTo)){
+                    return edge;
+                }
+            }
+        }
         return null;
     }
 
@@ -90,12 +106,14 @@ public class ListGraph<T> implements Graph<T> {
         return null;
     }
 
-    public boolean pathExists(T cityA, T cityB) {
+    public boolean pathExists(City a, City b) {
         return false;
     }
 
-    public List<Edge<T>> getPath(T cityA, T cityB) {
+    public List<Edge> getPath(City a, City b) {
         return null;
     }
+
 }
+
 
