@@ -31,7 +31,7 @@ public class ListGraph<T> implements Graph<T> {
         }
 
         if (getEdgeBetween(cityA, cityB) != null) {
-            throw new IllegalStateException("Connection already exists between " + a + " and " + b + ".");
+            throw new IllegalStateException("Connection already exists between " + cityA + " and " + cityB + ".");
         }
 
         Set<Edge> aEdges = nodes.get(cityA);
