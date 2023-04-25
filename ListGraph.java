@@ -1,4 +1,5 @@
 import java.util.*;
+import java.util.PriorityQueue;
 
 // PROG2 VT2023, Inlämningsuppgift, del 1 
 // Grupp 385
@@ -136,7 +137,15 @@ public class ListGraph<T> implements Graph<T> {
     }
 
     public List<Edge<T>> getPath(T cityA, T cityB) {
-        return null;
+        if (!pathExists(cityA, cityB)){ //kollar om det redan finns en väg mellan noderna(city)
+            return null;
+        }
+        PriorityQueue<Path<T>> paths = new PriorityQueue<>(); //använder priorityqueue istället för queue eftersom den är sorterad baserat på en given prioritet av elementen den lagrar. 
+        //vilket för att vi kan använda distansen av en väg mellan noder som prioritet för att sortera kön.
+        Set<T> visited = new HashSet<>(); //ett set för att hålla reda på vilka städer/noder man besökt
+        
+        Path<T> firstPath = new Path<>(cityA); //skapar en ny väg som börjar från och med cityA noden. 
+        
     }
 }
 
