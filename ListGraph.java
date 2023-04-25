@@ -7,10 +7,10 @@ import java.util.*;
 // Nora Wennerberg nowe9092
 
 public class ListGraph<T> implements Graph<T> {
-    private final Map<T, Set<Edge>> nodes = new HashMap<>();
+    private final Map<T, Set<Edge<T>>> nodes = new HashMap<T, Set<Edge<T>>>();
 
     public void add(T city) {
-        nodes.putIfAbsent(city, new HashSet<>());
+        nodes.putIfAbsent(city, new HashSet<Edge<T>>());
     }
 
     public void remove(T city) {
@@ -34,12 +34,12 @@ public class ListGraph<T> implements Graph<T> {
             throw new IllegalStateException("Connection already exists between " + cityA + " and " + cityB + ".");
         }
 
-        Set<Edge> aEdges = nodes.get(cityA);
-        Set<Edge> bEdges = nodes.get(cityB);
+        Set<Edge<T>> aEdges = nodes.get(cityA);
+        Set<Edge<T>> bEdges = nodes.get(cityB);
 
         //Gör grafen oriktad, pga skapar kant från a till b samt kant från b till a
-        aEdges.add(new Edge(cityB, name, distance));
-        bEdges.add(new Edge(cityA, name, distance));
+        aEdges.add(new Edge<>(cityB, name, distance));
+        bEdges.add(new Edge<>(cityA, name, distance));
 
         setConnectionWeight(cityA, cityB, distance);
     }
@@ -54,8 +54,8 @@ public class ListGraph<T> implements Graph<T> {
             throw new IllegalStateException("No edge between " + cityA + " and " + cityB + ".");
         }
 
-        Set<Edge> aEdges = nodes.get(cityA);
-        Set<Edge> bEdges = nodes.get(cityB);
+        Set<Edge<T>> aEdges = nodes.get(cityA);
+        Set<Edge<T>> bEdges = nodes.get(cityB);
 
         aEdges.remove(edge);
         bEdges.remove(edge);
@@ -65,7 +65,7 @@ public class ListGraph<T> implements Graph<T> {
         if (!nodes.containsKey(cityA) || !nodes.containsKey(cityB) || !pathExists(cityA, cityB)){
             throw new NoSuchElementException("Error: No such city or connection.");
         } else if (getEdgeBetween(cityA, cityB).getWeight() < 0) {
-            throw new IllegalArgumentException("Error: Wheight is negative");
+            throw new IllegalArgumentException("Error: Weight is negative");
         } else {
             Edge edge = getEdgeBetween(cityA, cityB);
             edge.setWeight(newDistance);
@@ -79,12 +79,12 @@ public class ListGraph<T> implements Graph<T> {
     }
 
     public Collection<Edge<T>> getEdgesFrom(T city) {
-        Set<Edge> edges = new HashSet<>(); //Alla kanter från noden
+        Set<Edge<T>> edges = new HashSet<Edge<T>>(); //Alla kanter från noden
 
         if (!nodes.containsKey(city)){
             throw new NoSuchElementException("Error: No such city.");
         } else {
-            for (Edge e : nodes.get(city)){ //Lägger till kanterna från city i edges
+            for (Edge<T> e : nodes.get(city)){ //Lägger till kanterna från city i edges
                 edges.add(e);
             }
         }
@@ -96,7 +96,7 @@ public class ListGraph<T> implements Graph<T> {
         if (!nodes.containsKey(cityFrom) || !nodes.containsKey(cityTo)){
             throw new NoSuchElementException("Error: No such city found.");
         } else if (pathExists(cityFrom, cityTo)){
-            for (Edge edge : nodes.get(cityFrom)){
+            for (Edge<T> edge : nodes.get(cityFrom)){
                 if (edge.getDestination().equals(cityTo)){
                     return edge;
                 }
@@ -127,7 +127,11 @@ public class ListGraph<T> implements Graph<T> {
     public void depthFirstSearch(T current, T destination, Set<T> visited){
         visited.add(current);
         if(current.equals(destination)){
-            
+            return;
+        } for (Edge<T> edge: nodes.get(current)){
+            if(!visited.contains(edge.getDestination())){
+                depthFirstSearch(edge.getDestination(), destination, visited);
+            }
         }
     }
 

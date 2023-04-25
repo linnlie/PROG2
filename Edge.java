@@ -28,7 +28,7 @@ public class Edge<T> {
 
     public void setWeight(int weight){
         if (weight < 0) {
-            throw new IllegalArgumentException("Aja baja vikten kan inte vara negativ!");
+            throw new IllegalArgumentException("Error: Weight cannot be negative.");
         }
         this.weight = weight;
     }
