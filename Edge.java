@@ -26,8 +26,11 @@ public class Edge<T> {
         return weight;
     }
 
-    public void setWeight(int distance){
-
+    public void setWeight(int weight){
+        if (weight < 0) {
+            throw new IllegalArgumentException("Aja baja vikten kan inte vara negativ!");
+        }
+        this.weight = weight;
     }
 
     public String getName(){
