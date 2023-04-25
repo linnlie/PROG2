@@ -114,7 +114,21 @@ public class ListGraph<T> implements Graph<T> {
     }
 
     public boolean pathExists(T cityA, T cityB) {
-        return false;
+        Set<T> visited = new HashSet<>();
+
+        if (!nodes.containsKey(cityA) || !nodes.containsKey(cityB)){
+            throw new NoSuchElementException("Error: One or more cities not found.");
+        }
+
+        depthFirstSearch(cityA, cityB, visited);
+        return visited.contains(cityB); //returnerar true om dfs har besökt cityB (en path har hittats), annars false
+    }
+
+    public void depthFirstSearch(T current, T destination, Set<T> visited){
+        visited.add(current);
+        if(current.equals(destination)){
+            
+        }
     }
 
     public List<Edge<T>> getPath(T cityA, T cityB) {
