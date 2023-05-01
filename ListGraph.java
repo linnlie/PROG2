@@ -136,16 +136,57 @@ public class ListGraph<T> implements Graph<T> {
         }
     }
 
-    public List<Edge<T>> getPath(T cityA, T cityB) {
-        if (!pathExists(cityA, cityB)){ //kollar om det redan finns en väg mellan noderna(city)
+    public List<Edge<T>> getPath(T start, T destination) {
+        if (!pathExists(start, destination)){ //kollar om det redan finns en väg mellan noderna(city)
             return null;
         }
-        PriorityQueue<Path<T>> paths = new PriorityQueue<>(); //använder priorityqueue istället för queue eftersom den är sorterad baserat på en given prioritet av elementen den lagrar. 
-        //vilket för att vi kan använda distansen av en väg mellan noder som prioritet för att sortera kön.
-        Set<T> visited = new HashSet<>(); //ett set för att hålla reda på vilka städer/noder man besökt
+
+        //Skapar en prioritets kö som använder en Comparator som jämför storleken på listor, där en mindre lista har högre prioritet. Jämför listor med typen <Edge<T>. 
+        //Varje element i denna prioritets kö är en lista av edge objekt som representerar en väg från start noden till någon annan nod i grafen.
+        //När man tar bort något från prioritetskön kommer det alltid vara vägen med lägst kostnad/distans först. Detta försäkrar att koden alltid söker vägar i ordningen av ökad distans/kostnad, vilket är nödvändigt eftersom vi vill hitta den kortaste vägen i grafen. 
+        PriorityQueue<List<Edge<T>>> queue = new PriorityQueue<>(Comparator.comparingInt(List::Size)); //använder priorityqueue istället för queue eftersom den är sorterad baserat på en given prioritet av elementen den lagrar. 
         
-        Path<T> firstPath = new Path<>(cityA); //skapar en ny väg som börjar från och med cityA noden. 
-        
+        // skapar en lista med en startväg med bara förtsa noden :)
+        List<Edge<T>> startEdge = new ArrayList<>();
+        startEdge.add(new Edge<>(start, null, 0));
+        queue.add(startEdge);
+
+        //skapar en map som sparar vilka noder som besökts samt deras kostnad
+        Map<T, Integer> distance = new HashMap<>():
+        distance.put(start, 0);
+
+        while(!queue.isEmpty()){
+
+            List<Edge<T>> edge = queue.poll(); // tar bort och retunerar det minsta elementet i kön och läggs till i en ny lista "edge"
+
+            //kollar om vi har nått slutnoden och ifall det är destination
+            T lastNode = edge.get(edge.size() - 1).getDestination();
+            if(lastNode.equals(destination)){
+                return edge.subList(1, edge.size()); //sublistan representerar den kortaste vägen från start noden till slut noden
+            }
+
+            for(Edge<T> edge : getEdgesFrom(lastNode)){
+
+               //den här koden loopar igenom alla edges som startar från last node för den nuvarande vägen, 
+               //och kollar hurvida att besöka nextNode via den nuvarande vägen är "billigare/kortare" än någon tidigare upptäckt väg till just den noden. 
+               //Om den hittar en "kortare" väg så är en ny väg/edge adderad till prioritetskön, och distansen/kostnaden för att nå nextNode är uppdaterad i hashmapen "distance"
+                T nextNode = edge.getDestination();
+
+                int distanceSoFar = distance.getOrDefault(nextNode, Integer.MAX_VALUE);
+                int distanceViaThisPath = distance.get(lastNode) + edge.getWeight();
+
+                if(distanceViaThisPath < distanceSoFar){
+                    List<Edge<T>> newEdge = new ArrayList<>(edge);
+                    newEdge.add(edge);
+
+                    queue.add(newEdge);
+
+                    distance.put(nextNode, distanceViaThisPath);
+                }
+            }
+            return null; //om den kommer hit betyder det att det inte finns någon väg mellan start och slutnoden (om de inte är vi som fuckat up koden :) )
+        }
+
     }
 }
 
