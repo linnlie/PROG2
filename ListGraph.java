@@ -137,56 +137,45 @@ public class ListGraph<T> implements Graph<T> {
     }
 
     public List<Edge<T>> getPath(T start, T destination) {
-        if (!pathExists(start, destination)){ //kollar om det redan finns en väg mellan noderna(city)
-            return null;
-        }
+        Map<T, T> edges = new HashMap<>(); //hålla reda på vilken nod som kom från vilken annan nod
+        Map<T, Integer> distances = new HashMap<>(); //håller reda på avståndet mellan varje nod och startnoden
+        LinkedList<T> queue = new LinkedList<>(); //en länkad lista som håller reda på vilka noder som ska besökas härnäst(vet inte hur de stavas)
+        LinkedList<Edge<T>> path = new LinkedList<>(); //håller reda på vilka edges som ingår i den kortaste vägen aka shortest path
 
-        //Skapar en prioritets kö som använder en Comparator som jämför storleken på listor, där en mindre lista har högre prioritet. Jämför listor med typen <Edge<T>. 
-        //Varje element i denna prioritets kö är en lista av edge objekt som representerar en väg från start noden till någon annan nod i grafen.
-        //När man tar bort något från prioritetskön kommer det alltid vara vägen med lägst kostnad/distans först. Detta försäkrar att koden alltid söker vägar i ordningen av ökad distans/kostnad, vilket är nödvändigt eftersom vi vill hitta den kortaste vägen i grafen. 
-        PriorityQueue<List<Edge<T>>> queue = new PriorityQueue<>(Comparator.comparingInt(List::Size)); //använder priorityqueue istället för queue eftersom den är sorterad baserat på en given prioritet av elementen den lagrar. 
-        
-        // skapar en lista med en startväg med bara förtsa noden :)
-        List<Edge<T>> startEdge = new ArrayList<>();
-        startEdge.add(new Edge<>(start, null, 0));
-        queue.add(startEdge);
+        edges.put(start, null); //lägger till startnoden i "edges" kartan, null eftersom det inte finns någon nod innan
+        distances.put(start, 0); //sätt avstånden till startnoden till 0
+        queue.add(start); //lägger till startnoden i kön
 
-        //skapar en map som sparar vilka noder som besökts samt deras kostnad
-        Map<T, Integer> distance = new HashMap<>():
-        distance.put(start, 0);
+        while(!queue.isEmpty()) {
+            T currentDestination = queue.pollFirst(); //tar ut första noden i kön
 
-        while(!queue.isEmpty()){
-
-            List<Edge<T>> edge = queue.poll(); // tar bort och retunerar det minsta elementet i kön och läggs till i en ny lista "edge"
-
-            //kollar om vi har nått slutnoden och ifall det är destination
-            T lastNode = edge.get(edge.size() - 1).getDestination();
-            if(lastNode.equals(destination)){
-                return edge.subList(1, edge.size()); //sublistan representerar den kortaste vägen från start noden till slut noden
-            }
-
-            for(Edge<T> edge : getEdgesFrom(lastNode)){
-
-               //den här koden loopar igenom alla edges som startar från last node för den nuvarande vägen, 
-               //och kollar hurvida att besöka nextNode via den nuvarande vägen är "billigare/kortare" än någon tidigare upptäckt väg till just den noden. 
-               //Om den hittar en "kortare" väg så är en ny väg/edge adderad till prioritetskön, och distansen/kostnaden för att nå nextNode är uppdaterad i hashmapen "distance"
-                T nextNode = edge.getDestination();
-
-                int distanceSoFar = distance.getOrDefault(nextNode, Integer.MAX_VALUE);
-                int distanceViaThisPath = distance.get(lastNode) + edge.getWeight();
-
-                if(distanceViaThisPath < distanceSoFar){
-                    List<Edge<T>> newEdge = new ArrayList<>(edge);
-                    newEdge.add(edge);
-
-                    queue.add(newEdge);
-
-                    distance.put(nextNode, distanceViaThisPath);
+            //loopa igenom alla edges som utgår från noden
+            for(Edge<T> edge : nodes.get(currentDestination)) {
+                T nextDestination = edge.getDestination(); //hämtar destinations noden av den nuvarande edgen
+                int distanceToDestination = distances.get(currentDestination) + edge.getWeight(); //räknar ut distansen till destinations noden
+                if(!distances.containsKey(nextDestination) || distanceToDestination < distances.get(nextDestination)) {
+                    //uppdaterar kartläggningen om den nya vägen är kortare
+                    edges.put(nextDestination, currentDestination); //sätter parent av destinations noden till den nuvarande noden
+                    distances.put(nextDestination, distanceToDestination); //uppdaterar distansen till destinations noden
+                    queue.add(nextDestination); //lägger till destinations noden till kön
                 }
             }
-            return null; //om den kommer hit betyder det att det inte finns någon väg mellan start och slutnoden (om de inte är vi som fuckat up koden :) )
         }
 
+        if(!distances.containsKey(destination)) {
+            return null; //om det inte finns någpn väg till destinations noden så retunerar vi null
+        }
+
+        T currentNode = destination; //börjar på destinations noden
+        //lägger till alla edges från destinationen till startnoden i den länkade listan över den kortaste vägen
+        while(!currentNode.equals(start)) {
+            T nextNode = edges.get(currentNode);
+            Edge<T> edge = getEdgeBetween(nextNode, currentNode);
+            path.addFirst(edge);
+            currentNode = nextNode;
+        }
+
+        return path; //retunerar en länkad lista över den kortaste vägen :)
     }
 }
 
