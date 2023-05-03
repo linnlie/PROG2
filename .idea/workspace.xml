@@ -10,6 +10,7 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/City.java" beforeDir="false" afterPath="$PROJECT_DIR$/City.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ListGraph.java" beforeDir="false" afterPath="$PROJECT_DIR$/ListGraph.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/GraphTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/GraphTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -36,7 +37,7 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "/Users/linusleven/Documents/GitHub/PROG2",
+    "last_opened_file_path": "C:/Users/linnl/Downloads/openjfx-17.0.6_windows-x64_bin-sdk/javafx-sdk-17.0.6/lib",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -48,14 +49,6 @@
   }
 }]]></component>
   <component name="RunManager" selected="JUnit.GraphTest">
-    <configuration name="GraphTest (1)" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <option name="PACKAGE_NAME" value="" />
-      <option name="MAIN_CLASS_NAME" value="GraphTest" />
-      <option name="TEST_OBJECT" value="class" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="GraphTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="PROG2" />
       <option name="PACKAGE_NAME" value="" />
@@ -65,10 +58,20 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="GraphTest.__version" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="PROG2" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="MAIN_CLASS_NAME" value="GraphTest" />
+      <option name="METHOD_NAME" value="__version" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <recent_temporary>
       <list>
         <item itemvalue="JUnit.GraphTest" />
-        <item itemvalue="JUnit.GraphTest (1)" />
+        <item itemvalue="JUnit.GraphTest.__version" />
       </list>
     </recent_temporary>
   </component>
