@@ -118,7 +118,7 @@ public class ListGraph<T> implements Graph<T> {
         Set<T> visited = new HashSet<>();
 
         if (!nodes.containsKey(cityA) || !nodes.containsKey(cityB)){
-            throw new NoSuchElementException("Error: One or more cities not found.");
+            return false;
         }
 
         depthFirstSearch(cityA, cityB, visited);
