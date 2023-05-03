@@ -6,7 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="b297352b-1d30-4535-99a6-3ead7ff393ed" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Edge.java" beforeDir="false" afterPath="$PROJECT_DIR$/Edge.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ListGraph.java" beforeDir="false" afterPath="$PROJECT_DIR$/ListGraph.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,7 +44,7 @@
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
-  <component name="RunManager" selected="JUnit.GraphTest">
+  <component name="RunManager" selected="JUnit.GraphTest.test04_remove_existing_node_with_edge">
     <configuration name="GraphTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="PROG2" />
       <option name="PACKAGE_NAME" value="" />
@@ -64,8 +64,30 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="GraphTest.test04_remove_existing_node_with_edge" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="PROG2" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="MAIN_CLASS_NAME" value="GraphTest" />
+      <option name="METHOD_NAME" value="test04_remove_existing_node_with_edge" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="GraphTest.test04_remove_nonexisting_node" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="PROG2" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="MAIN_CLASS_NAME" value="GraphTest" />
+      <option name="METHOD_NAME" value="test04_remove_nonexisting_node" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="JUnit.GraphTest.test04_remove_existing_node_with_edge" />
+        <item itemvalue="JUnit.GraphTest.test04_remove_nonexisting_node" />
         <item itemvalue="JUnit.GraphTest" />
         <item itemvalue="JUnit.GraphTest.__version" />
       </list>
@@ -84,6 +106,7 @@
       <workItem from="1681411585987" duration="14024000" />
       <workItem from="1681747432294" duration="4159000" />
       <workItem from="1682409040890" duration="6000000" />
+      <workItem from="1683103343745" duration="3135000" />
     </task>
     <servers />
   </component>
@@ -100,5 +123,21 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/ListGraph.java</url>
+          <line>23</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/ListGraph.java</url>
+          <line>17</line>
+          <option name="timeStamp" value="10" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

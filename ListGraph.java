@@ -16,9 +16,10 @@ public class ListGraph<T> implements Graph<T> {
 
     public void remove(T city) {
         if (nodes.containsKey(city)) {
-            nodes.remove(city);
+            nodes.remove(city, getEdgesFrom(city));
+            System.out.println("hejdå");
         } else {
-            System.out.println("Error: No such city found.");
+            throw new NoSuchElementException("No such city found");
         }
     }
 
