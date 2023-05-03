@@ -51,16 +51,17 @@ public class ListGraph<T> implements Graph<T> {
             throw new NoSuchElementException("One or more cities not found.");
         }
 
-        Edge edge = getEdgeBetween(cityA, cityB);
-        if (edge == null) {
-            throw new IllegalStateException("No edge between " + cityA + " and " + cityB + ".");
+        Edge edgeBetweenAandB = getEdgeBetween(cityA, cityB);
+        Edge edgeBetweenBandA = getEdgeBetween(cityB, cityA);
+        if (edgeBetweenAandB == null || edgeBetweenAandB == null) {
+            throw new IllegalStateException("Edge not found.");
         }
 
         Set<Edge<T>> aEdges = nodes.get(cityA);
         Set<Edge<T>> bEdges = nodes.get(cityB);
 
-        aEdges.remove(edge);
-        bEdges.remove(edge);
+        aEdges.remove(edgeBetweenAandB);
+        bEdges.remove(edgeBetweenBandA);
     }
 
     public void setConnectionWeight(T cityA, T cityB, int newDistance) {
