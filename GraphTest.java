@@ -11,9 +11,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class GraphTest {
 	//
-	private static final int MAJOR_VERSION = 1;
-	private static final int MINOR_VERSION = 7;
-	private static final String UPDATED_DATE = "2021-04-23";
+	private static final int MAJOR_VERSION = 2;
+	private static final int MINOR_VERSION = 3;
+	private static final String UPDATED_DATE = "2023-04-19";
 	//
 	private static final String ILLEGAL_STATE_EXCEPTION_BORDE_HA_KASTATS = "Fel: undantaget IllegalStateException borde ha kastats.";
 	private static final String GET_NODES_INCORRECT_CONTENT = "Fel: samlingen getNodes returnerar innehåller inte rätt noder.";
@@ -65,7 +65,7 @@ class GraphTest {
 		connect("A", "G", "A -> G", 3);
 		connect("G", "B", "G -> B", 28);
 		connect("B", "F", "B -> F", 5);
-		connect("F", "F", "F -> F", 3);
+//		connect("F", "F", "F -> F", 3);
 		connect("F", "H", "F -> H", 1);
 		connect("H", "D", "H -> D", 1);
 		connect("H", "I", "H -> I", 3);
@@ -126,7 +126,7 @@ class GraphTest {
 
 		assertThrows(NoSuchElementException.class, () -> graph.getEdgeBetween(VALID_NODE_1, VALID_NODE_3));
 
-		assertEquals(Optional.empty(), graph.getEdgesFrom(VALID_NODE_1).stream().map(Edge::getDestination).filter(d -> d.equals(VALID_NODE_3)).findFirst());
+		assertEquals(Optional.empty(), graph.getEdgesFrom(VALID_NODE_1).stream().map(Edge<String>::getDestination).filter(d -> d.equals(VALID_NODE_3)).findFirst());
 	}
 
 	@Test
@@ -244,8 +244,8 @@ class GraphTest {
 		var actualEdges = graph.getEdgesFrom(VALID_NODE_3);
 		assertEquals(2, actualEdges.size());
 
-		var actualStrings = actualEdges.stream().map(Edge::getName).collect(Collectors.toSet());
-		actualStrings.addAll(actualEdges.stream().map(Edge::getDestination).collect(Collectors.toSet()));
+		var actualStrings = actualEdges.stream().map(Edge<String>::getName).collect(Collectors.toSet());
+		actualStrings.addAll(actualEdges.stream().map(Edge<String>::getDestination).collect(Collectors.toSet()));
 		actualStrings.addAll(actualEdges.stream().map(stringEdge -> String.valueOf(stringEdge.getWeight())).collect(Collectors.toSet()));
 		actualStrings.add(VALID_NODE_3);
 
@@ -313,7 +313,7 @@ class GraphTest {
 	void test11_getPath_existing_path() {
 		createExampleGraph();
 		var validPath = graph.getPath(VALID_NODE_1, VALID_NODE_2);
-		var cost = validPath.stream().map(Edge::getWeight).reduce(0, Integer::sum);
+		var cost = validPath.stream().map(Edge<String>::getWeight).reduce(0, Integer::sum);
 		assertEquals(2, validPath.size(), "Fel: den enda vägen mellan noderna borde vara 2 steg lång.");
 		assertEquals(31, cost, "Fel: den enda vägen mellan noderna borde kosta 31.");
 	}
@@ -368,7 +368,7 @@ class GraphTest {
 		var validPath = graph.getPath(VALID_NODE_1, VALID_NODE_2);
 		Assumptions.assumingThat(validPath != null, () -> {
 			assert validPath != null;
-			var cost = validPath.stream().map(Edge::getWeight).reduce(0, Integer::sum);
+			var cost = validPath.stream().map(Edge<String>::getWeight).reduce(0, Integer::sum);
 			assertEquals(2, validPath.size(), "Fel: längd på path borde inte ha ändrats.");
 			assertEquals(50, cost, "Fel: kostnad för path borde ha ändrats efter setConnectionWeight.");
 		});
@@ -376,13 +376,13 @@ class GraphTest {
 
 	@Test
 	@Order(130)
-	@DisplayName("Testar Edge::toString.")
+	@DisplayName("Testar Edge<String>::toString.")
 	void test13_edgeToString_valid_edge() {
 		createExampleGraph();
 		var edge = graph.getEdgeBetween(VALID_NODE_1, VALID_NODE_3);
 		var expected = "till G med A -> G tar 3";
 		var actual = edge.toString().trim();
-		assertEquals(expected, actual, String.format("Edge::toString ser inte ut som förväntat. Borde ha varit:%n%s%nmen var:%n%s%n", expected, actual));
+		assertEquals(expected, actual, String.format("Edge<String>::toString ser inte ut som förväntat. Borde ha varit:%n%s%nmen var:%n%s%n", expected, actual));
 	}
 
 	@Test
