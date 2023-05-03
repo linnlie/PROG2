@@ -63,14 +63,16 @@ public class ListGraph<T> implements Graph<T> {
         bEdges.remove(edge);
     }
 
-    public void setConnectionWeight(T cityA, T cityB, int newDistance) {
+    public void setConnectionWeight(T cityA, T cityB, int newWeight) {
         if (!nodes.containsKey(cityA) || !nodes.containsKey(cityB) || !pathExists(cityA, cityB)){
             throw new NoSuchElementException("Error: No such city or connection.");
         } else if (getEdgeBetween(cityA, cityB).getWeight() < 0) {
             throw new IllegalArgumentException("Error: Weight is negative");
         } else {
-            Edge edge = getEdgeBetween(cityA, cityB);
-            edge.setWeight(newDistance);
+            Edge edgeOne = getEdgeBetween(cityA, cityB);
+            edgeOne.setWeight(newWeight);
+            Edge edgeTwo = getEdgeBetween(cityB, cityA);
+            edgeTwo.setWeight(newWeight);
         }
     }
 
