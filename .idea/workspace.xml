@@ -44,7 +44,7 @@
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
-  <component name="RunManager" selected="JUnit.GraphTest.test07_disconnect">
+  <component name="RunManager" selected="JUnit.GraphTest">
     <configuration name="GraphTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="PROG2" />
       <option name="PACKAGE_NAME" value="" />
@@ -96,9 +96,9 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="JUnit.GraphTest.test07_disconnect" />
         <item itemvalue="JUnit.GraphTest" />
         <item itemvalue="JUnit.GraphTest.test04_remove_existing_node_with_edge" />
+        <item itemvalue="JUnit.GraphTest.test07_disconnect" />
         <item itemvalue="JUnit.GraphTest.test04_remove_nonexisting_node" />
         <item itemvalue="JUnit.GraphTest.__version" />
       </list>
@@ -117,7 +117,7 @@
       <workItem from="1681411585987" duration="14024000" />
       <workItem from="1681747432294" duration="4159000" />
       <workItem from="1682409040890" duration="6000000" />
-      <workItem from="1683103343745" duration="5683000" />
+      <workItem from="1683103343745" duration="9987000" />
     </task>
     <servers />
   </component>
@@ -134,21 +134,5 @@
         </entry>
       </map>
     </option>
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/ListGraph.java</url>
-          <line>23</line>
-          <option name="timeStamp" value="2" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/ListGraph.java</url>
-          <line>17</line>
-          <option name="timeStamp" value="10" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
 </project>

@@ -14,12 +14,22 @@ public class ListGraph<T> implements Graph<T> {
         nodes.putIfAbsent(city, new HashSet<Edge<T>>());
     }
 
-    public void remove(T city) {
-        if (nodes.containsKey(city)) {
-            nodes.remove(city, getEdgesFrom(city));
-            System.out.println("hejdå");
-        } else {
+    public void remove(T cityToRemove) {
+        if (!nodes.containsKey(cityToRemove)) {
             throw new NoSuchElementException("No such city found");
+        }
+
+        //lägger förbindelserna från cityToRemove i ett set
+        Set<Edge<T>> edgesFrom = nodes.get(cityToRemove);
+        
+        if(edgesFrom != null){
+            for(Edge<T> edge : edgesFrom){
+                if(edge.getDestination() != cityToRemove){
+                    Set<Edge<T>> edgesFromNeighbour = nodes.get(edge.getDestination());
+                    edgesFromNeighbour.removeIf(e -> e.getDestination() == cityToRemove);
+                }
+            }
+            nodes.remove(cityToRemove);
         }
     }
 
