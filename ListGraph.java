@@ -32,13 +32,13 @@ public class ListGraph<T> implements Graph<T> {
         }
     }
 
-    public void connect(T cityA, T cityB, String name, int distance) {
+    public void connect(T cityA, T cityB, String name, int weight) {
         if (!nodes.containsKey(cityA) || !nodes.containsKey(cityB)) {
             throw new NoSuchElementException("One or more cities not found.");
         }
 
-        if (distance < 0) {
-            throw new IllegalArgumentException("Distance cannot be a negative number.");
+        if (weight < 0) {
+            throw new IllegalArgumentException("Time cannot be a negative number.");
         }
 
         if (getEdgeBetween(cityA, cityB) != null) {
@@ -49,10 +49,10 @@ public class ListGraph<T> implements Graph<T> {
         Set<Edge<T>> cityBEdges = nodes.get(cityB);
 
         //Gör grafen oriktad, pga skapar kant från a till b samt kant från b till a
-        cityAEdges.add(new Edge<>(cityB, name, distance));
-        cityBEdges.add(new Edge<>(cityA, name, distance));
+        cityAEdges.add(new Edge<>(cityB, name, weight));
+        cityBEdges.add(new Edge<>(cityA, name, weight));
 
-        setConnectionWeight(cityA, cityB, distance);
+        setConnectionWeight(cityA, cityB, weight);
     }
 
     public void disconnect(T cityA, T cityB) {
@@ -151,12 +151,12 @@ public class ListGraph<T> implements Graph<T> {
 
     public List<Edge<T>> getPath(T start, T destination) {
         Map<T, T> edges = new HashMap<>(); //hålla reda på vilken nod som kom från vilken annan nod
-        Map<T, Integer> distances = new HashMap<>(); //håller reda på avståndet mellan varje nod och startnoden
+        Map<T, Integer> weights = new HashMap<>(); //håller reda på avståndet mellan varje nod och startnoden
         LinkedList<T> queue = new LinkedList<>(); //en länkad lista som håller reda på vilka noder som ska besökas härnäst(vet inte hur de stavas)
         LinkedList<Edge<T>> path = new LinkedList<>(); //håller reda på vilka edges som ingår i den kortaste vägen aka shortest path
 
         edges.put(start, null); //lägger till startnoden i "edges" kartan, null eftersom det inte finns någon nod innan
-        distances.put(start, 0); //sätt avstånden till startnoden till 0
+        weights.put(start, 0); //sätt avstånden till startnoden till 0
         queue.add(start); //lägger till startnoden i kön
 
         while(!queue.isEmpty()) {
@@ -165,17 +165,17 @@ public class ListGraph<T> implements Graph<T> {
             //loopa igenom alla edges som utgår från noden
             for(Edge<T> edge : nodes.get(currentDestination)) {
                 T nextDestination = edge.getDestination(); //hämtar destinations noden av den nuvarande edgen
-                int distanceToDestination = distances.get(currentDestination) + edge.getWeight(); //räknar ut distansen till destinations noden
-                if(!distances.containsKey(nextDestination) || distanceToDestination < distances.get(nextDestination)) {
+                int timeToDestination = weights.get(currentDestination) + edge.getWeight(); //räknar ut distansen till destinations noden
+                if(!weights.containsKey(nextDestination) || timeToDestination < weights.get(nextDestination)) {
                     //uppdaterar kartläggningen om den nya vägen är kortare
                     edges.put(nextDestination, currentDestination); //sätter parent av destinations noden till den nuvarande noden
-                    distances.put(nextDestination, distanceToDestination); //uppdaterar distansen till destinations noden
+                    weights.put(nextDestination, timeToDestination); //uppdaterar distansen till destinations noden
                     queue.add(nextDestination); //lägger till destinations noden till kön
                 }
             }
         }
 
-        if(!distances.containsKey(destination)) {
+        if(!weights.containsKey(destination)) {
             return null; //om det inte finns någpn väg till destinations noden så retunerar vi null
         }
 
