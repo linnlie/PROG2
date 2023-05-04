@@ -23,8 +23,12 @@ public class Graphics extends Application{
 
         //Skapar å lägger till MenuItems till fileMenu
         MenuItem menuItemOne = new MenuItem("New Map");
+        MenuItem menuItemTwo = new MenuItem("Open");
         MenuItem menuItemThree = new MenuItem("Save");
+        MenuItem menuItemFour = new MenuItem("Save Image");
         fileMenu.getItems().add(menuItemOne);
+        fileMenu.getItems().add(menuItemTwo);
         fileMenu.getItems().add(menuItemThree);
+        fileMenu.getItems().add(menuItemFour);
     }
 }
