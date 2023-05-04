@@ -1,5 +1,4 @@
 import java.util.*;
-import java.util.PriorityQueue;
 
 // PROG2 VT2023, Inlämningsuppgift, del 1 
 // Grupp 385
@@ -46,12 +45,12 @@ public class ListGraph<T> implements Graph<T> {
             throw new IllegalStateException("Connection already exists between " + cityA + " and " + cityB + ".");
         }
 
-        Set<Edge<T>> aEdges = nodes.get(cityA);
-        Set<Edge<T>> bEdges = nodes.get(cityB);
+        Set<Edge<T>> cityAEdges = nodes.get(cityA);
+        Set<Edge<T>> cityBEdges = nodes.get(cityB);
 
         //Gör grafen oriktad, pga skapar kant från a till b samt kant från b till a
-        aEdges.add(new Edge<>(cityB, name, distance));
-        bEdges.add(new Edge<>(cityA, name, distance));
+        cityAEdges.add(new Edge<>(cityB, name, distance));
+        cityBEdges.add(new Edge<>(cityA, name, distance));
 
         setConnectionWeight(cityA, cityB, distance);
     }
@@ -67,11 +66,11 @@ public class ListGraph<T> implements Graph<T> {
             throw new IllegalStateException("Edge not found.");
         }
 
-        Set<Edge<T>> aEdges = nodes.get(cityA);
-        Set<Edge<T>> bEdges = nodes.get(cityB);
+        Set<Edge<T>> cityAEdges = nodes.get(cityA);
+        Set<Edge<T>> cityBEdges = nodes.get(cityB);
 
-        aEdges.remove(edgeBetweenAandB);
-        bEdges.remove(edgeBetweenBandA);
+        cityAEdges.remove(edgeBetweenAandB);
+        cityBEdges.remove(edgeBetweenBandA);
     }
 
     public void setConnectionWeight(T cityA, T cityB, int newWeight) {

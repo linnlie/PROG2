@@ -6,8 +6,8 @@ import java.util.Objects;
 // Nora Wennerberg nowe9092
 
 public class Edge<T> {
-    public int weight;
-    public String name;
+    private int weight;
+    private String name;
     private final T destination;
 
     public Edge(T destination, String name, double weight) {
