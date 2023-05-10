@@ -169,13 +169,13 @@ public class Graphics <T> extends Application{
             System.out.println("Error: No saved information.");
         } else { //Annars öppna europa.graph
             try {
-                FileReader file = new FileReader("europa.graph");
-                BufferedReader reader = new BufferedReader(file); //Läser in filen
+                FileReader file = new FileReader("europa.graph"); //Referens till filen
+                BufferedReader reader = new BufferedReader(file); //Läser in filen rad för rad
 
-                //Återskapar objekt från filen
-                String line;
-                reader.readLine(); //läser file:europa.gif
-                reader.readLine(); //Läser uppradningen av alla städer
+                //Återskapar objekt från filen:
+                String line; //Tom sträng
+                reader.readLine(); //läser första raden file:europa.gif
+                reader.readLine(); //Läser andra raden med uppradningen av alla städer
                 //Alla rader efter detta ser ut ex: Stockholm;Oslo;Train;3
                 while ((line = reader.readLine()) != null){ //läser en rad i taget genom hela filen tills den tar slut
                     String[] parts = line.split(";"); //Delar upp noderna genom ;
@@ -183,10 +183,14 @@ public class Graphics <T> extends Application{
                     T cityEnd = (T) parts[1];
                     String tag = parts[2];
                     int weight = Integer.parseInt(parts[3]); //Omvandlar vikten från string till int
+
+                    //Lägger till noderna i grafen
+                    listGraph.add(cityStart);
+                    listGraph.add(cityEnd);
+
+                    //Skapar en koppling mellan dem
+                    listGraph.connect(cityStart, cityEnd, tag, weight);
                 }
-
-
-
             } catch (IOException e){
                 throw new RuntimeException("Error: No such file found.");
             }
