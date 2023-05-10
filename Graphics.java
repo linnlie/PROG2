@@ -135,7 +135,7 @@ public class Graphics <T> extends Application{
         }
     }
 
-    private void save(){
+    private void save() throws FileNotFoundException{
         try {
             String filePath = "europa.graph"; //Referens till filen vi ska skriva till
             BufferedWriter writer = new BufferedWriter(new FileWriter(filePath)); //Skapar ny med filePath
@@ -164,7 +164,7 @@ public class Graphics <T> extends Application{
         
     }
 
-    private void open(){
+    private void open() throws FileNotFoundException{
         if (!hasSaved){ //Om användaren inte har sparad info så skicka felmeddelande
             System.out.println("Error: No saved information.");
         } else { //Annars öppna europa.graph
@@ -188,7 +188,7 @@ public class Graphics <T> extends Application{
 
 
             } catch (IOException e){
-            throw new FileNotFoundException("Error: No such file found.");
+                throw new FileNotFoundException("Error: No such file found.");
             }
         }
     }
