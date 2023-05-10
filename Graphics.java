@@ -164,7 +164,7 @@ public class Graphics <T> extends Application{
         
     }
 
-    private void open(){
+    private void open(){ //Övningsuppgift 4 använder en map för att konvertera String till Node, kanske behövs???
         if (!hasSaved){ //Om användaren inte har sparad info så skicka felmeddelande
             System.out.println("Error: No saved information.");
         } else { //Annars öppna europa.graph
@@ -191,6 +191,8 @@ public class Graphics <T> extends Application{
                     //Skapar en koppling mellan dem
                     listGraph.connect(cityStart, cityEnd, tag, weight);
                 }
+                file.close();
+                reader.close();
             } catch (IOException e){
                 throw new RuntimeException("Error: No such file found.");
             }
