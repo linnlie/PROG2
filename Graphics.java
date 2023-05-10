@@ -31,16 +31,6 @@ public class Graphics extends Application{
         MenuBar menuBar = new MenuBar();
         VBox vBox = new VBox(menuBar);
 
-        FlowPane buttonPane = new FlowPane();
-        //sätter mellanrum/spacing mellan ui elementen (knapparna) både vertikalt och horisontellt
-        buttonPane.setHgap(20);
-        buttonPane.setVgap(20);
-
-        //här sätter jag den "önskade" bredden på flowpanen
-        buttonPane.setPrefWrapLength(800);
-
-        vBox.getChildren().add(buttonPane);
-
         Menu fileMenu = new Menu("File"); //Skapar & sätter Meny-texten till File
 
         //loopar igenom listan av menynamnen, skapar en menuitem för varje namn och lägger till eventhanterare via handlefilemenu + lägger till i filemenyn
@@ -52,6 +42,16 @@ public class Graphics extends Application{
 
         //lägger till filemenu tiill menubar
         menuBar.getMenus().add(fileMenu);
+
+        FlowPane buttonPane = new FlowPane();
+        //sätter mellanrum/spacing mellan ui elementen (knapparna) både vertikalt och horisontellt
+        buttonPane.setHgap(20);
+        buttonPane.setVgap(20);
+
+        //här sätter jag den "önskade" bredden på flowpanen
+        buttonPane.setPrefWrapLength(800);
+
+        vBox.getChildren().add(buttonPane);
 
         //sätter bredd och höjd för stage
         primaryStage.setWidth(1000);
