@@ -10,7 +10,7 @@ public class Graphics extends Application{
         launch(args);
     }
 
-    public void start(Stage primaryStage){
+    public void start(Stage primaryStage){ //Stage skapas automatisikt vid start. Kan innehålla flera scener.
         MenuBar menuBar = new MenuBar(); //Skapar instans av MenuBar
         VBox vBox = new VBox(menuBar); //Skapar VBox som rymmer MenuBar för att få menyn liggandes
         Scene scene = new Scene(vBox, 960, 600); //root node, width, height. Root node är typ parent till allt annat i scenen, så kanske ska bytas ut mot typ BorderPane
