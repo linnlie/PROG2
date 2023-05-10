@@ -54,8 +54,8 @@ public class Graphics extends Application{
         vBox.getChildren().add(buttonPane);
 
         //sätter bredd och höjd för stage
-        primaryStage.setWidth(1000);
-        primaryStage.setHeight(400);
+        primaryStage.setWidth(698);
+        primaryStage.setHeight(818);
 
         //lista med meny knappar
         List<CustomButton> buttons = List.of(
