@@ -13,11 +13,16 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.image.Image;
+import java.io.*;
+import java.util.*;
 
-public class Graphics extends Application{
+public class Graphics <T> extends Application{
     private Rectangle mapBackground;
     private boolean imageLoaded = false;
     private ImageView imageView;
+    private String imageUrl = "europa.gif";
+    private ListGraph listGraph = new ListGraph();
+    private TextField nameField;
 
     public static void main(String[]args){
         launch(args);
@@ -101,7 +106,6 @@ public class Graphics extends Application{
         switch(menuNamn){
             case "New Map":
                 if (!imageLoaded) {
-                    String imageUrl = "europa.gif";
                     Image image = new Image(imageUrl);
                     imageView.setImage(image);
                     imageLoaded = true;
@@ -113,7 +117,7 @@ public class Graphics extends Application{
                 System.out.println("Open menu item clicked!");
                 break;
             case "Save":
-
+                save();
                 System.out.println("Save menu item clicked!");
                 break;
             case "Save Image":
@@ -128,5 +132,34 @@ public class Graphics extends Application{
             default:
                 break;
         }
+    }
+
+    private void save(){
+        try {
+            String filePath = "europa.graph"; //Referens till filen vi ska skriva till
+            BufferedWriter writer = new BufferedWriter(new FileWriter(filePath)); //Skapar ny med filePath
+            writer.write("file:" + imageUrl); //Skriver ut url:en
+            StringBuilder sb = new StringBuilder(); //Skapar stringBuilder som är tom just nu
+            
+            Set<T> nodeSet = listGraph.getNodes(); ///Hämtar alla noder
+            for (T node : nodeSet){ //Går igenom varje nod i nod-Settet
+                sb.append(nameField + ";"); //Lägger till nodens namn; i stringBuildern
+                //Användaren skriver in ett namn, kommer nog behöva hitta det i en lista. Ändra alltså nameField sen.
+                //Sedan ska vi också lägga till koordinaterna
+            }
+            sb.deleteCharAt(nodeSet.size()); //size - 1? Vill ta bort sista ;
+            writer.write(sb.toString()); //Skriver ut stringBuildern i filen
+
+            // //Hittar och skriver ut förbindelserna
+            // Collection <Edge<T>> edges = listGraph.getEdgesFrom();
+            // for (T node : nodeSet){
+            //     //Loopa igenom varje edge, skriv ut från-noden, till-noden, namnet å vikten
+            // }
+
+            writer.close();
+        } catch (IOException e){
+            throw new RuntimeException("Error: No such file");
+        }
+        
     }
 }
