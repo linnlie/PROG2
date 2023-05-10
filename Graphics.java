@@ -23,6 +23,7 @@ public class Graphics <T> extends Application{
     private String imageUrl = "europa.gif";
     private ListGraph listGraph = new ListGraph();
     private TextField nameField;
+    private boolean hasSaved = false;
 
     public static void main(String[]args){
         launch(args);
@@ -113,7 +114,7 @@ public class Graphics <T> extends Application{
                 System.out.println("New Map menu item clicked!");
                 break;
             case "Open":
-
+                open();
                 System.out.println("Open menu item clicked!");
                 break;
             case "Save":
@@ -158,8 +159,37 @@ public class Graphics <T> extends Application{
 
             writer.close();
         } catch (IOException e){
-            throw new RuntimeException("Error: No such file");
+            throw new FileNotFoundException("Error: No such file found.");
         }
         
+    }
+
+    private void open(){
+        if (!hasSaved){ //Om användaren inte har sparad info så skicka felmeddelande
+            System.out.println("Error: No saved information.");
+        } else { //Annars öppna europa.graph
+            try {
+                FileReader file = new FileReader("europa.graph");
+                BufferedReader reader = new BufferedReader(file); //Läser in filen
+
+                //Återskapar objekt från filen
+                String line;
+                reader.readLine(); //läser file:europa.gif
+                reader.readLine(); //Läser uppradningen av alla städer
+                //Alla rader efter detta ser ut ex: Stockholm;Oslo;Train;3
+                while ((line = reader.readLine()) != null){ //läser en rad i taget genom hela filen tills den tar slut
+                    String[] parts = line.split(";"); //Delar upp noderna genom ;
+                    T cityStart = (T) parts[0]; //Omvandlar String till T
+                    T cityEnd = (T) parts[1];
+                    String tag = parts[2];
+                    int weight = Integer.parseInt(parts[3]); //Omvandlar vikten från string till int
+                }
+
+
+
+            } catch (IOException e){
+            throw new FileNotFoundException("Error: No such file found.");
+            }
+        }
     }
 }
