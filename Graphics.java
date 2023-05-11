@@ -3,8 +3,11 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+
+import java.awt.image.BufferedImage;
 import java.util.List;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -15,6 +18,9 @@ import javafx.scene.paint.ImagePattern;
 import javafx.scene.image.Image;
 import java.io.*;
 import java.util.*;
+import javafx.embed.swing.SwingFXUtils;
+import javax.imageio.ImageIO;
+
 
 public class Graphics <T> extends Application{
     private Rectangle mapBackground;
@@ -24,7 +30,12 @@ public class Graphics <T> extends Application{
     private ListGraph listGraph = new ListGraph();
     private TextField nameField;
     private boolean hasSaved = false;
+<<<<<<< HEAD
     
+=======
+    public Scene scene;
+
+>>>>>>> main
     public static void main(String[]args){
         launch(args);
     }
@@ -42,7 +53,7 @@ public class Graphics <T> extends Application{
         //loopar igenom listan av menynamnen, skapar en menuitem för varje namn och lägger till eventhanterare via handlefilemenu + lägger till i filemenyn
         for(String rubrikNamn : menuNamnen){
             MenuItem menuItem = new MenuItem(rubrikNamn);
-            menuItem.setOnAction(this::handleFileMenyn);
+            menuItem.setOnAction(this::handleFileMenu);
             fileMenu.getItems().add(menuItem);
         }
 
@@ -94,13 +105,16 @@ public class Graphics <T> extends Application{
         root.getChildren().addAll(vBox, buttonPane, imagePane);
 
         //här skapas en scene med vbox som root och måtten/storleken
-        Scene scene = new Scene(root, 960, 600);
+        scene = new Scene(root, 960, 600);
         primaryStage.setScene(scene);
         primaryStage.show();
         primaryStage.setTitle("PathFinder");
+
+        //primaryStage.setOnCloseRequest(new ExitHandler());
+        primaryStage.setOnCloseRequest(event -> exit(event));
     }
 
-    public void handleFileMenyn(ActionEvent event){
+    public void handleFileMenu(ActionEvent event){
         MenuItem menuItem = (MenuItem) event.getSource();
         String menuNamn = menuItem.getText();
 
@@ -122,13 +136,13 @@ public class Graphics <T> extends Application{
                 System.out.println("Save menu item clicked!");
                 break;
             case "Save Image":
-
+                saveImage();
                 System.out.println("Save Image menu item clicked!");
                 break;
             case "Exit":
-
+                WindowEvent closeEvent = new WindowEvent(scene.getWindow(), WindowEvent.WINDOW_CLOSE_REQUEST);
+                exit(closeEvent);
                 System.out.println("Exit menu item clicked!");
-                System.exit(0);
                 break;
             default:
                 break;
@@ -247,6 +261,35 @@ public class Graphics <T> extends Application{
                 reader.close();
             } catch (IOException e){
                 throw new RuntimeException("Error: No such file found.");
+            }
+        }
+    }
+
+    public void saveImage(){
+        try{
+            WritableImage image = scene.snapshot(null); //skapar bild av scenen
+            BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null); //bilden omvandlas till bufferedimage via swingFXUtils, vilket krävs pga imageio kan bara hantera bufferedimages
+            ImageIO.write(bufferedImage, "png", new File("capture.png")); //imageIO kan spara bilder i olika format
+        } catch (IOException e){
+            Alert alert = new Alert(Alert.AlertType.ERROR, "IO-fel " + e.getMessage());
+            alert.showAndWait();
+        }
+    }
+
+    public void exit(WindowEvent event){
+        if(hasSaved){
+            //Stage stageToClose = (Stage) scene.getWindow();
+            //stageToClose.close();
+            System.exit(0);
+        } else {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setContentText("Osparade ändringar. Avsluta ändå?");
+            Optional<ButtonType> result = alert.showAndWait();
+            if(result.isPresent() && result.get().equals(ButtonType.CANCEL)){
+                event.consume(); //"konsumerar" aka avbryter eventet, så stängningen kommer ej ske
+            } else {
+                Stage stageToClose = (Stage) scene.getWindow();
+                stageToClose.close();
             }
         }
     }
