@@ -135,6 +135,25 @@ public class Graphics <T> extends Application{
         }
     }
 
+    private void saveExpriement(String url, Graph<T> graph){
+        try {
+            String filePath = "europa.graph";
+            FileWriter fileWriter = new FileWriter(filePath);
+            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+
+            //skriv url till bild filen
+            bufferedWriter.write(url);
+            bufferedWriter.newLine();
+
+            //skriva ut noderna 
+            for(T t : graph.getNodes()){
+                bufferedWriter.write(t.getName)
+            }
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+    }
+
     private void save(){
         try {
             String filePath = "europa.graph"; //Referens till filen vi ska skriva till
@@ -165,7 +184,7 @@ public class Graphics <T> extends Application{
     }
 
     private boolean harOsparadeChanges(){
-
+        
     }
 
     private void open(){ //Övningsuppgift 4 använder en map för att konvertera String till Node, kanske behövs???
