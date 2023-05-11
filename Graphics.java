@@ -24,7 +24,7 @@ public class Graphics <T> extends Application{
     private ListGraph listGraph = new ListGraph();
     private TextField nameField;
     private boolean hasSaved = false;
-
+    
     public static void main(String[]args){
         launch(args);
     }
@@ -164,7 +164,40 @@ public class Graphics <T> extends Application{
         
     }
 
+    private boolean harOsparadeChanges(){
+
+    }
+
     private void open(){ //Övningsuppgift 4 använder en map för att konvertera String till Node, kanske behövs???
+        if (harOsparadeChanges()) {
+            // Visa dialogruta för att fråga användaren om personen vill spara ändringarna
+            Alert alert = new Alert(AlertType.CONFIRMATION);
+            alert.setTitle("Osparade ändringar");
+            alert.setHeaderText("Det finns osparade ändringar i kartan");
+            alert.setContentText("Vill du spara ändringarna innan du öppnar en ny karta?");
+    
+            //gör knapparna till dialog fönstret, ButtonType är typen av knappar som finns i ett alert dialogfönster, trodde det funka med vanliga knappar först men tydligen inte, detta är en subtyp till button
+            ButtonType saveButton = new ButtonType("Spara");
+            ButtonType okButton = new ButtonType("OK");
+            ButtonType cancelButton = new ButtonType("Avbryt", ButtonData.CANCEL_CLOSE);
+    
+            alert.getButtonTypes().setAll(saveButton, okButton, cancelButton); //sätter alla knappar i dialogfönstret
+    
+            Optional<ButtonType> result = alert.showAndWait(); //väntar med att sätta knapp typen tills användaren trycker på någon, rätt häftigt ändå
+            
+            switch(result.get().getText()){
+                //spara de osparade ändringarna
+                case "Spara":
+                    save();
+                    break;
+                case "OK":
+                //förkasta de osparade ändringarna och det nya "dokumentet" öppnas
+                default:
+                //avbryt 
+                return;
+            }
+        }
+        
         if (!hasSaved){ //Om användaren inte har sparad info så skicka felmeddelande
             System.out.println("Error: No saved information.");
         } else { //Annars öppna europa.graph
