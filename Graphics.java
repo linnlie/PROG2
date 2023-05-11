@@ -136,9 +136,9 @@ public class Graphics <T> extends Application{
                 System.out.println("Save Image menu item clicked!");
                 break;
             case "Exit":
-                //exit(); - hur skickar jag windowsevent close request som parameter?
+                WindowEvent closeEvent = new WindowEvent(scene.getWindow(), WindowEvent.WINDOW_CLOSE_REQUEST);
+                exit(closeEvent);
                 System.out.println("Exit menu item clicked!");
-                System.exit(0);
                 break;
             default:
                 break;
@@ -222,8 +222,9 @@ public class Graphics <T> extends Application{
 
     public void exit(WindowEvent event){
         if(hasSaved){
-            Stage stageToClose = (Stage) scene.getWindow();
-            stageToClose.close();
+            //Stage stageToClose = (Stage) scene.getWindow();
+            //stageToClose.close();
+            System.exit(0);
         } else {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setContentText("Osparade ändringar. Avsluta ändå?");
