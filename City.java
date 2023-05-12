@@ -1,11 +1,15 @@
-/*import java.util.Objects;
+import java.util.Objects;
 
 public class City{
 
     private final String cityName;
+    private final int x;
+    private final int y;
 
-    public City(String cityName){
+    public City(String cityName, int x, int y){
         this.cityName = cityName;
+        this.x = x;
+        this.y = y;
     }
 
     public String getName(){
@@ -19,6 +23,14 @@ public class City{
         return false;
     }
 
+    public int getX(){
+        return x;
+    }
+
+    public int getY(){
+        return y;
+    }
+
     public int hashCode(){
         return Objects.hash(cityName);
     }
@@ -26,4 +38,4 @@ public class City{
     public String toString(){
         return this.cityName;
     }
-}*/
+}

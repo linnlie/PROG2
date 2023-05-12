@@ -161,7 +161,9 @@ public class Graphics <T> extends Application{
 
             //skriva ut noderna 
             for(T t : graph.getNodes()){
-                bufferedWriter.write(t.getName)
+                City node = (City) t;
+                bufferedWriter.write(node.getName() + ";" + node.getX() + ";" + node.getY());
+                bufferedWriter.newLine();
             }
         } catch (Exception e) {
             // TODO: handle exception
