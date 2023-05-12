@@ -30,12 +30,8 @@ public class Graphics <T> extends Application{
     private ListGraph listGraph = new ListGraph();
     private TextField nameField;
     private boolean hasSaved = false;
-<<<<<<< HEAD
-    
-=======
     public Scene scene;
 
->>>>>>> main
     public static void main(String[]args){
         launch(args);
     }
@@ -149,26 +145,24 @@ public class Graphics <T> extends Application{
         }
     }
 
-    private void saveExpriement(String url, Graph<T> graph){
-        try {
-            String filePath = "europa.graph";
-            FileWriter fileWriter = new FileWriter(filePath);
-            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-
-            //skriv url till bild filen
-            bufferedWriter.write(url);
-            bufferedWriter.newLine();
-
-            //skriva ut noderna 
-            for(T t : graph.getNodes()){
-                City node = (City) t;
-                bufferedWriter.write(node.getName() + ";" + node.getX() + ";" + node.getY());
-                bufferedWriter.newLine();
-            }
-        } catch (Exception e) {
-            // TODO: handle exception
-        }
-    }
+//    private void saveExpriement(String url, Graph<T> graph){
+//        try {
+//            String filePath = "europa.graph";
+//            FileWriter fileWriter = new FileWriter(filePath);
+//            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+//
+//            //skriv url till bild filen
+//            bufferedWriter.write(url);
+//            bufferedWriter.newLine();
+//
+//            //skriva ut noderna
+//            for(T t : graph.getNodes()){
+//                bufferedWriter.write(t.getName)
+//            }
+//        } catch (Exception e) {
+//            // TODO: handle exception
+//        }
+//    }
 
     private void save(){
         try {
@@ -200,23 +194,23 @@ public class Graphics <T> extends Application{
     }
 
     private boolean harOsparadeChanges(){
-        
+        return false; //skrev dit detta för metoden va tom /Linn
     }
 
     private void open(){ //Övningsuppgift 4 använder en map för att konvertera String till Node, kanske behövs???
         if (harOsparadeChanges()) {
             // Visa dialogruta för att fråga användaren om personen vill spara ändringarna
-            Alert alert = new Alert(AlertType.CONFIRMATION);
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Osparade ändringar");
             alert.setHeaderText("Det finns osparade ändringar i kartan");
             alert.setContentText("Vill du spara ändringarna innan du öppnar en ny karta?");
     
             //gör knapparna till dialog fönstret, ButtonType är typen av knappar som finns i ett alert dialogfönster, trodde det funka med vanliga knappar först men tydligen inte, detta är en subtyp till button
-            ButtonType saveButton = new ButtonType("Spara");
+            //ButtonType saveButton = new ButtonType("Spara"); //denna behövs icke
             ButtonType okButton = new ButtonType("OK");
-            ButtonType cancelButton = new ButtonType("Avbryt", ButtonData.CANCEL_CLOSE);
+            ButtonType cancelButton = new ButtonType("Avbryt", ButtonBar.ButtonData.CANCEL_CLOSE); //? var bara ButtonData.CANCEL_CLOSE men fick fel för det, intellij rekommenderade att importera buttonbar
     
-            alert.getButtonTypes().setAll(saveButton, okButton, cancelButton); //sätter alla knappar i dialogfönstret
+            alert.getButtonTypes().setAll(okButton, cancelButton); //sätter alla knappar i dialogfönstret //tog bort saveButton härifrån
     
             Optional<ButtonType> result = alert.showAndWait(); //väntar med att sätta knapp typen tills användaren trycker på någon, rätt häftigt ändå
             
@@ -269,11 +263,11 @@ public class Graphics <T> extends Application{
 
     public void saveImage(){
         try{
-            WritableImage image = scene.snapshot(null); //skapar bild av scenen
+            WritableImage image = scene.snapshot(null); //skapar bild av scenen - snapshot kan bara vara WritableImage (som är en bildtyp för att representera bilder i minnet)
             BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null); //bilden omvandlas till bufferedimage via swingFXUtils, vilket krävs pga imageio kan bara hantera bufferedimages
             ImageIO.write(bufferedImage, "png", new File("capture.png")); //imageIO kan spara bilder i olika format
         } catch (IOException e){
-            Alert alert = new Alert(Alert.AlertType.ERROR, "IO-fel " + e.getMessage());
+            Alert alert = new Alert(Alert.AlertType.ERROR, "IO-error " + e.getMessage());
             alert.showAndWait();
         }
     }
@@ -285,7 +279,7 @@ public class Graphics <T> extends Application{
             System.exit(0);
         } else {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setContentText("Osparade ändringar. Avsluta ändå?");
+            alert.setContentText("Unsaved changes, exit anyway?");
             Optional<ButtonType> result = alert.showAndWait();
             if(result.isPresent() && result.get().equals(ButtonType.CANCEL)){
                 event.consume(); //"konsumerar" aka avbryter eventet, så stängningen kommer ej ske
