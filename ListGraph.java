@@ -7,7 +7,7 @@ import java.util.*;
 // Nora Wennerberg nowe9092
 
 public class ListGraph<T> implements Graph<T> {
-    private final Map<T, Set<Edge<T>>> nodes = new HashMap<T, Set<Edge<T>>>();
+    private final Map<T, Set<Edge<T>>> nodes = new HashMap<T, Set<Edge<T>>>(); //Nyckeln är T, låser upp Set av kanter
 
     public void add(T city) {
         nodes.putIfAbsent(city, new HashSet<Edge<T>>());
@@ -19,91 +19,86 @@ public class ListGraph<T> implements Graph<T> {
         }
 
         //lägger förbindelserna från cityToRemove i ett set
-        Set<Edge<T>> edgesFrom = nodes.get(cityToRemove);
+        Set<Edge<T>> edgesFrom = nodes.get(cityToRemove); //Nyckeln är cityToRemove, får ut set av dess kanter
         
-        if(edgesFrom != null){
-            for(Edge<T> edge : edgesFrom){
-                if(edge.getDestination() != cityToRemove){
-                    Set<Edge<T>> edgesFromNeighbour = nodes.get(edge.getDestination());
-                    edgesFromNeighbour.removeIf(e -> e.getDestination() == cityToRemove);
+        if(edgesFrom != null){ //Om den har kanter
+            for(Edge<T> edge : edgesFrom){ //Går igenom alla kanter var för sig
+                if(edge.getDestination() != cityToRemove){ //Om destinationen inte är denna
+                    Set<Edge<T>> edgesFromNeighbour = nodes.get(edge.getDestination()); //Hittar grannen å hämtar dess grannar
+                    edgesFromNeighbour.removeIf(e -> e.getDestination() == cityToRemove); //Ta bort kanten till staden som tas bort
                 }
             }
-            nodes.remove(cityToRemove);
+            nodes.remove(cityToRemove); //Ta bort staden
         }
     }
 
-    public void connect(T cityA, T cityB, String name, int weight) {
-        if (!nodes.containsKey(cityA) || !nodes.containsKey(cityB)) {
+    public void connect(T cityStart, T cityEnd, String edgeName, int weight) {
+        if (!nodes.containsKey(cityStart) || !nodes.containsKey(cityEnd)) { 
             throw new NoSuchElementException("One or more cities not found.");
-        }
-
-        if (weight < 0) {
+        } else if (weight < 0) {
             throw new IllegalArgumentException("Time cannot be a negative number.");
+        } else if (getEdgeBetween(cityStart, cityEnd) != null) {
+            throw new IllegalStateException("Connection already exists between " + cityStart + " and " + cityEnd + ".");
         }
 
-        if (getEdgeBetween(cityA, cityB) != null) {
-            throw new IllegalStateException("Connection already exists between " + cityA + " and " + cityB + ".");
-        }
-
-        Set<Edge<T>> cityAEdges = nodes.get(cityA);
-        Set<Edge<T>> cityBEdges = nodes.get(cityB);
+        Set<Edge<T>> cityStartEdges = nodes.get(cityStart); //Får alla kanter från start
+        Set<Edge<T>> cityEndEdges = nodes.get(cityEnd); //alla kanter från end
 
         //Gör grafen oriktad, pga skapar kant från a till b samt kant från b till a
-        cityAEdges.add(new Edge<>(cityB, name, weight));
-        cityBEdges.add(new Edge<>(cityA, name, weight));
+        cityStartEdges.add(new Edge<>(cityEnd, edgeName, weight));
+        cityEndEdges.add(new Edge<>(cityStart, edgeName, weight));
 
-        setConnectionWeight(cityA, cityB, weight);
+        setConnectionWeight(cityStart, cityEnd, weight);
     }
 
-    public void disconnect(T cityA, T cityB) {
-        if (!nodes.containsKey(cityA) || !nodes.containsKey(cityB)) {
+    public void disconnect(T cityStart, T cityEnd) {
+        if (!nodes.containsKey(cityStart) || !nodes.containsKey(cityEnd)) {
             throw new NoSuchElementException("One or more cities not found.");
         }
 
-        Edge edgeBetweenAandB = getEdgeBetween(cityA, cityB);
-        Edge edgeBetweenBandA = getEdgeBetween(cityB, cityA);
-        if (edgeBetweenAandB == null || edgeBetweenAandB == null) {
+        Edge edgeBetweenStartAndEnd = getEdgeBetween(cityStart, cityEnd);
+        Edge edgeBetweenEndAndStart = getEdgeBetween(cityEnd, cityStart);
+        if (edgeBetweenStartAndEnd == null || edgeBetweenStartAndEnd == null) {
             throw new IllegalStateException("Edge not found.");
         }
 
-        Set<Edge<T>> cityAEdges = nodes.get(cityA);
-        Set<Edge<T>> cityBEdges = nodes.get(cityB);
+        Set<Edge<T>> cityAEdges = nodes.get(cityStart);
+        Set<Edge<T>> cityBEdges = nodes.get(cityEnd);
 
-        cityAEdges.remove(edgeBetweenAandB);
-        cityBEdges.remove(edgeBetweenBandA);
+        cityAEdges.remove(edgeBetweenStartAndEnd); //Tar bort en koppling, men noden är kvar
+        cityBEdges.remove(edgeBetweenEndAndStart);
     }
 
-    public void setConnectionWeight(T cityA, T cityB, int newWeight) {
-        if (!nodes.containsKey(cityA) || !nodes.containsKey(cityB) || !pathExists(cityA, cityB)){
+    public void setConnectionWeight(T cityStart, T cityEnd, int newWeight) {
+        if (!nodes.containsKey(cityStart) || !nodes.containsKey(cityEnd) || !pathExists(cityStart, cityEnd)){
             throw new NoSuchElementException("Error: No such city or connection.");
-        } else if (getEdgeBetween(cityA, cityB).getWeight() < 0) {
+        } else if (getEdgeBetween(cityStart, cityEnd).getWeight() < 0) {
             throw new IllegalArgumentException("Error: Weight is negative");
         } else {
-            Edge edgeOne = getEdgeBetween(cityA, cityB);
+            Edge edgeOne = getEdgeBetween(cityStart, cityEnd);
             edgeOne.setWeight(newWeight);
-            Edge edgeTwo = getEdgeBetween(cityB, cityA);
+            Edge edgeTwo = getEdgeBetween(cityEnd, cityStart);
             edgeTwo.setWeight(newWeight);
         }
     }
 
     public Set<T> getNodes() {
         Set<T> nodesCopy = new HashSet<T>();
-        nodesCopy.addAll(nodes.keySet());
+        nodesCopy.addAll(nodes.keySet()); //.keySet() returnerar en set med alla nycklar (städer)
         return nodesCopy;
     }
 
     public Collection<Edge<T>> getEdgesFrom(T city) {
-        Set<Edge<T>> edges = new HashSet<Edge<T>>(); //Alla kanter från noden
+        Set<Edge<T>> edges = new HashSet<Edge<T>>(); //Set för alla kanter från noden
 
         if (!nodes.containsKey(city)){
             throw new NoSuchElementException("Error: No such city.");
         } else {
-            for (Edge<T> e : nodes.get(city)){ //Lägger till kanterna från city i edges
-                edges.add(e);
+            for (Edge<T> e : nodes.get(city)){ //Går igenom varje edge i nyckelns set av kanter. 
+                edges.add(e); //Lägger till nodens kanter i Set:et edges
             }
         }
         return new HashSet<>(edges); //Returnerar kopia av samlingen av alla kanter
-
     }
 
     public Edge getEdgeBetween(T cityFrom, T cityTo) {
