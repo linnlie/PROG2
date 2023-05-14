@@ -20,6 +20,7 @@ import java.io.*;
 import java.util.*;
 import javafx.embed.swing.SwingFXUtils;
 import javax.imageio.ImageIO;
+import javafx.scene.control.ButtonBar.ButtonData;
 
 
 public class Graphics <T> extends Application{
@@ -208,7 +209,7 @@ public class Graphics <T> extends Application{
             //gör knapparna till dialog fönstret, ButtonType är typen av knappar som finns i ett alert dialogfönster, trodde det funka med vanliga knappar först men tydligen inte, detta är en subtyp till button
             //ButtonType saveButton = new ButtonType("Spara"); //denna behövs icke
             ButtonType okButton = new ButtonType("OK");
-            ButtonType cancelButton = new ButtonType("Avbryt", ButtonBar.ButtonData.CANCEL_CLOSE); //? var bara ButtonData.CANCEL_CLOSE men fick fel för det, intellij rekommenderade att importera buttonbar
+            ButtonType cancelButton = new ButtonType("Avbryt", ButtonData.CANCEL_CLOSE);
     
             alert.getButtonTypes().setAll(okButton, cancelButton); //sätter alla knappar i dialogfönstret //tog bort saveButton härifrån
     
