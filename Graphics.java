@@ -146,6 +146,24 @@ public class Graphics <T> extends Application{
         }
     }
 
+    public void handleButtons (ActionEvent event){
+        CustomButton button = (CustomButton) event.getSource();
+        String name = button.getText();
+
+        switch (name){
+            case "Find Path":
+                break;
+            case "Show Connection":
+                break;
+            case "New Place":
+                break;
+            case "New Connection":
+                break;
+            case "Change Connection":
+                break;
+        }
+    }
+
 //    private void saveExpriement(String url, Graph<T> graph){
 //        try {
 //            String filePath = "europa.graph";
@@ -191,7 +209,6 @@ public class Graphics <T> extends Application{
         } catch (IOException e){
             throw new RuntimeException("Error: No such file found.");
         }
-        
     }
 
     private boolean harOsparadeChanges(){
