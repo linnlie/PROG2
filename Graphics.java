@@ -1,6 +1,7 @@
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.WritableImage;
@@ -87,7 +88,8 @@ public class Graphics <T> extends Application{
             button.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    System.out.println("Knapp " + button.getText() + " har klickat på :)");
+                    handleButtons(event);
+                    //System.out.println("Knapp " + button.getText() + " har klickat på :)");
                 }
             });
         }
@@ -158,6 +160,7 @@ public class Graphics <T> extends Application{
             case "New Place":
                 break;
             case "New Connection":
+                newConnection();
                 break;
             case "Change Connection":
                 break;
@@ -297,13 +300,63 @@ public class Graphics <T> extends Application{
             System.exit(0);
         } else {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setHeaderText("Confirmation:");
             alert.setContentText("Unsaved changes, exit anyway?");
             Optional<ButtonType> result = alert.showAndWait();
             if(result.isPresent() && result.get().equals(ButtonType.CANCEL)){
                 event.consume(); //"konsumerar" aka avbryter eventet, så stängningen kommer ej ske
-            } else {
+            } else if(result.isPresent() && result.get().equals(ButtonType.OK)){
                 Stage stageToClose = (Stage) scene.getWindow();
                 stageToClose.close();
+            }
+        }
+    }
+
+    public void newConnection(){
+        //ifall användaren ej valt två platser
+//        Alert placeError = new Alert(Alert.AlertType.ERROR);
+//        placeError.setHeaderText("Error:");
+//        placeError.setContentText("Two places must be connected!");
+//        placeError.showAndWait();
+
+        Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
+        HBox hBox1 = new HBox(6); //skapar två hboxar (två "rader"), med padding mellan dess children (komponenter)
+        HBox hBox2 = new HBox(12);
+        VBox vBox = new VBox(5);
+        vBox.getChildren().addAll(hBox1, hBox2); //skapar vbox som lägger hboxarna efter varandra vertikalt
+        BorderPane borderPane = new BorderPane();
+        borderPane.setCenter(vBox); //CENTRERAS EJ - borderpanen e värdelös atm
+        confirmation.getDialogPane().setContent(borderPane); //lägger till borderPanen i alert
+
+        confirmation.setHeaderText("Connection from blabla till bleble");
+
+        Label nameLabel = new Label("Name:");
+        TextField nameField = new TextField();
+        hBox1.getChildren().addAll(nameLabel, nameField);
+
+        Label timeLabel = new Label("Time:");
+        TextField timeField = new TextField();
+        hBox2.getChildren().addAll(timeLabel, timeField);
+
+        Optional<ButtonType> result = confirmation.showAndWait();
+
+        if(result.isPresent() && result.get().equals(ButtonType.CANCEL)){
+            return;
+        } else if(result.isPresent() && result.get().equals(ButtonType.OK)){
+            String name = nameField.getText();
+            String time = timeField.getText();
+            if(name.isBlank() || name.isEmpty()){
+                Alert nameError = new Alert(Alert.AlertType.ERROR);
+                nameError.setHeaderText("Error:");
+                nameError.setContentText("Name cannot be empty!");
+                nameError.showAndWait();
+            } else if(!time.matches("\\d+")){
+                Alert timeError = new Alert(Alert.AlertType.ERROR);
+                timeError.setHeaderText("Error:");
+                timeError.setContentText("Time must be in numbers!");
+                timeError.showAndWait();
+            } else{
+                //listGraph.connect(); //de två noderna som valts
             }
         }
     }
