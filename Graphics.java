@@ -20,6 +20,8 @@ import java.io.*;
 import java.util.*;
 import javafx.embed.swing.SwingFXUtils;
 import javax.imageio.ImageIO;
+import javafx.geometry.*;
+
 import javafx.scene.control.ButtonBar.ButtonData;
 
 
@@ -39,7 +41,6 @@ public class Graphics <T> extends Application{
 
     @Override
     public void start(Stage primaryStage) {
-
         //lista med underrubriker för "file" menyn
         List<String> menuNamnen = List.of("New Map", "Open", "Save", "Save Image", "Exit");
         MenuBar menuBar = new MenuBar();
@@ -84,10 +85,11 @@ public class Graphics <T> extends Application{
 
         //här adderar jag en eventhandlar till varje separat knapp som är tillagd i listan
         for (CustomButton button : buttons) {
-            button.setOnAction(new EventHandler<ActionEvent>() {
+            button.setOnAction(new EventHandler<ActionEvent>() { //Allt inom {} är den nya metoden EventHandler
                 @Override
                 public void handle(ActionEvent event) {
-                    System.out.println("Knapp " + button.getText() + " har klickat på :)");
+                    handleButtons(event);
+                    //System.out.println("Knapp " + button.getText() + " har klickat på :)");
                 }
             });
         }
@@ -152,14 +154,20 @@ public class Graphics <T> extends Application{
 
         switch (name){
             case "Find Path":
+                System.out.println("Find Path clicked");
                 break;
             case "Show Connection":
+                showConnection();
+                System.out.println("Show Connection print");
                 break;
             case "New Place":
+                System.out.println("New Place print");
                 break;
             case "New Connection":
+                System.out.println("New Connection print");
                 break;
             case "Change Connection":
+                System.out.println("Change Connection clicked");
                 break;
         }
     }
@@ -306,5 +314,57 @@ public class Graphics <T> extends Application{
                 stageToClose.close();
             }
         }
+    }
+
+    public void showConnection(){
+        Set<City> nodes = listGraph.getNodes(); //Hämtar alla noder
+        City cityStart = new City("temp1"); //Kanske ska flyttas ut till instansvariabel?
+        City cityEnd = new City("temp2"); //Måste ändra sen så att man hämtar de faktiskta noderna?
+
+        if (cityStart == null || cityEnd == null){   //Om det inte finns två markerade platser i kartan visas felmeddelande
+            showError("Error: Select two cities.");
+            return;
+        } else if (listGraph.getEdgeBetween(cityStart, cityEnd) == null){ //Om det inte finns förbindelse mellan platserna visas felmeddelande
+            showError("Error: No connection between citites.");
+            return;
+        } 
+
+        //Visar ett fönster med uppgifter om förbindelsen.
+        Alert alert = new Alert (Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Connection");
+        alert.setHeaderText("Connection from blablabla to buuu");
+
+        //Gör första HBox:en
+        Label name = new Label("Name: ");
+        TextField nameField = new TextField();
+        HBox hboxOne = new HBox(8); //sätter padding horisontellt
+        hboxOne.getChildren().addAll(name, nameField);
+
+        //Gör andra HBox:en
+        Label time = new Label("Time: ");
+        TextField timeField = new TextField();
+        HBox hboxTwo = new HBox(13);
+        hboxTwo.getChildren().addAll(time, timeField);
+
+        //Lägg till de i en VBox
+        VBox vbox = new VBox(10);
+        vbox.getChildren().addAll(hboxOne, hboxTwo);
+        vbox.setAlignment(Pos.CENTER);
+
+        //placerar de i mitten av en BorderPane
+        // BorderPane borderPane = new BorderPane();
+        // borderPane.setCenter(vbox);
+        // borderPane.setAlignment(vbox, Pos.CENTER);
+
+        alert.getDialogPane().setContent(vbox);
+        alert.showAndWait();
+    }
+
+    private void showError(String errorMessage){
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText(null);
+        alert.setContentText(errorMessage);
+        alert.showAndWait();
     }
 }
