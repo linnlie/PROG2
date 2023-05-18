@@ -357,7 +357,7 @@ public class Graphics <T> extends Application{
                 nameError.setHeaderText("Error:");
                 nameError.setContentText("Name cannot be empty!");
                 nameError.showAndWait();
-            } else if(!time.matches("\\d+")){
+            } else if(!time.matches("\\d+")){ //ifall strängen inte bara innehåller siffror
                 Alert timeError = new Alert(Alert.AlertType.ERROR);
                 timeError.setHeaderText("Error:");
                 timeError.setContentText("Time must be in numbers!");
