@@ -1,4 +1,5 @@
-import javafx.scene.control.Button;
+import java.awt.Button;
+
 
 public class CustomButton extends Button {
 
@@ -6,12 +7,12 @@ public class CustomButton extends Button {
     public CustomButton(String text, double x, double y) {
         super(text); //anropa superklassens konstruktor för att sätta texten på knappen
         //sätter x och y kordinaterna i pane för knappen
-        setLayoutX(x);
-        setLayoutY(y);
+        //setLayoutY(y);
+        //setLayoutX(x);
     }
 
     //metod för att ändra texten på knappen om man vill göra det :)
     public void setButtonText(String text) {
-        super.setText(text); //anropa superklassens setText metoden för att sätta texten på knappen
+        super.setLabel(text); //anropa superklassens setText metoden för att sätta texten på knappen
     }
 }

@@ -2,9 +2,11 @@ import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
@@ -14,7 +16,10 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.*;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.image.ImageView;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.image.Image;
 import java.io.*;
@@ -35,6 +40,14 @@ public class Graphics <T> extends Application{
     private TextField nameField;
     private boolean hasSaved = false;
     public Scene scene;
+
+    private Pane imagePane;
+    private CustomButton newPlaceButton;
+    private ArrayList<CirclePlace> placesList = new ArrayList<>();
+    private CirclePlace place1;
+    private CirclePlace place2;
+
+    private List<CustomButton> buttons;
 
     public static void main(String[]args){
         launch(args);
@@ -74,10 +87,10 @@ public class Graphics <T> extends Application{
         primaryStage.setHeight(818);
 
         //lista med meny knappar
-        List<CustomButton> buttons = List.of(
+        buttons = List.of(
                 new CustomButton("Find Path", 0, 0),
                 new CustomButton("Show Connection", 0, 0),
-                new CustomButton("New Place", 0, 0),
+                newPlaceButton = new CustomButton("New Place", 0, 0),
                 new CustomButton("New Connection", 0, 0),
                 new CustomButton("Change Connection", 0, 0)
         );
@@ -85,7 +98,7 @@ public class Graphics <T> extends Application{
         buttonPane.getChildren().addAll(buttons); //lägger in knapparna i pane
 
         //här adderar jag en eventhandlar till varje separat knapp som är tillagd i listan
-        for (CustomButton button : buttons) {
+        /*for (CustomButton button : buttons) {
             button.setOnAction(new EventHandler<ActionEvent>() { //Allt inom {} är den nya metoden EventHandler
                 @Override
                 public void handle(ActionEvent event) {
@@ -93,14 +106,17 @@ public class Graphics <T> extends Application{
                     //System.out.println("Knapp " + button.getText() + " har klickat på :)");
                 }
             });
+        }*/
+        for(CustomButton button : buttons){
+            button.setOnAction(this::handleButtons);
+            button.setDisable(true);
         }
 
         //skapar en egen pane för själva bilden så att den inte lagras på knapparna
-        VBox imagePane = new VBox();
-        imageView = new ImageView(); //ramen för bilden
-        imagePane.getChildren().add(imageView); //lägger till ramen till bildens pane
+        imagePane = new Pane();
+        imageView = new ImageView();
+        imagePane.getChildren().add(imageView);
 
-        //skapar en parent pane som håller menupanen/file menyn, pane för knapparna, och bilden som ska laddas
         VBox root = new VBox();
         root.getChildren().addAll(vBox, buttonPane, imagePane);
 
@@ -124,6 +140,9 @@ public class Graphics <T> extends Application{
                     Image image = new Image(imageUrl);
                     imageView.setImage(image);
                     imageLoaded = true;
+                    for(CustomButton b : buttons){
+                        b.setDisable(false);
+                    }
                 }
                 System.out.println("New Map menu item clicked!");
                 break;
@@ -163,6 +182,7 @@ public class Graphics <T> extends Application{
                 break;
             case "New Place":
                 System.out.println("New Place print");
+                newPlaceButton.setOnAction(new NewPlaceHandler());
                 break;
             case "New Connection":
                 newConnection();
@@ -171,6 +191,82 @@ public class Graphics <T> extends Application{
             case "Change Connection":
                 System.out.println("Change Connection clicked");
                 break;
+        }
+    }
+
+    class NewPlaceHandler implements EventHandler<ActionEvent>{
+        @Override
+        public void handle(ActionEvent event){
+
+            newPlaceButton.setDisable(true);
+            imagePane.setCursor(Cursor.CROSSHAIR);
+
+            imagePane.setOnMouseClicked(new MapClickHandler());
+        }
+    }
+
+    class MapClickHandler implements EventHandler<MouseEvent>{
+        @Override
+        public void handle(MouseEvent event){
+            double x = event.getX();
+            double y = event.getY();
+
+            TextInputDialog newPlaceName = new TextInputDialog();
+            newPlaceName.setTitle("New Place");
+            newPlaceName.setHeaderText("Enter the following: ");
+            newPlaceName.setContentText("Name of new place:");
+            var result = newPlaceName.showAndWait();
+
+            if(result.isPresent()){
+                String name = newPlaceName.getEditor().getText();
+                CirclePlace newPlace = new CirclePlace(name, x, y);
+
+                //addera nya platsen till grafen
+                placesList.add(newPlace);
+                imagePane.getChildren().add(newPlace);
+                newPlace.setId(name);
+
+                Label labelNewPlace = new Label(name);
+                labelNewPlace.setFont(Font.font("Verdana", FontWeight.SEMI_BOLD, 20));
+                labelNewPlace.setTextFill(Color.BLACK);
+                labelNewPlace.setLayoutX(x);
+                labelNewPlace.setLayoutY(y + 8);
+                imagePane.getChildren().add(labelNewPlace);
+
+                //nu vet vi att användaren har lagt till en plats, så saved är false
+
+                labelNewPlace.setDisable(true);
+                newPlace.setOnMouseClicked(new PlaceClickHandler());
+                
+            }
+
+            newPlaceButton.setDisable(false);
+            imagePane.setCursor(Cursor.DEFAULT);
+            imagePane.setOnMouseClicked(null);
+        }
+    }
+
+    class PlaceClickHandler implements EventHandler<MouseEvent>{
+        @Override
+        public void handle(MouseEvent event){
+            CirclePlace place = (CirclePlace) event.getSource();
+
+            if(place.isSelected()){
+                place.setSelected(false);
+                if(place == place1){
+                    place1 = null;
+                }else{
+                    place2 = null;
+                }
+            }else{
+                if(place1 == null){
+                    place1 = place;
+                    place.setSelected(true);
+                }else if(place2 == null){
+                    place2 = place;
+                    place.setSelected(true);
+                }
+            }
         }
     }
 
