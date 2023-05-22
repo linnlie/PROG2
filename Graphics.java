@@ -353,17 +353,12 @@ public class Graphics <T> extends Application{
             String name = nameField.getText();
             String time = timeField.getText();
             if(name.isBlank() || name.isEmpty()){
-                Alert nameError = new Alert(Alert.AlertType.ERROR);
-                nameError.setHeaderText("Error:");
-                nameError.setContentText("Name cannot be empty!");
-                nameError.showAndWait();
+                showError("Name cannot be empty!");
             } else if(!time.matches("\\d+")){ //ifall strängen inte bara innehåller siffror
-                Alert timeError = new Alert(Alert.AlertType.ERROR);
-                timeError.setHeaderText("Error:");
-                timeError.setContentText("Time must be in numbers!");
-                timeError.showAndWait();
+                showError("Time must be in numbers!");
             } else{
                 //listGraph.connect(); //de två noderna som valts
+                //skapa linje mellan de för att visualisera förbindelsen?
             }
         }
     }
