@@ -1,6 +1,7 @@
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.WritableImage;
@@ -20,6 +21,8 @@ import java.io.*;
 import java.util.*;
 import javafx.embed.swing.SwingFXUtils;
 import javax.imageio.ImageIO;
+import javafx.geometry.*;
+
 import javafx.scene.control.ButtonBar.ButtonData;
 
 
@@ -39,7 +42,6 @@ public class Graphics <T> extends Application{
 
     @Override
     public void start(Stage primaryStage) {
-
         //lista med underrubriker för "file" menyn
         List<String> menuNamnen = List.of("New Map", "Open", "Save", "Save Image", "Exit");
         MenuBar menuBar = new MenuBar();
@@ -84,10 +86,11 @@ public class Graphics <T> extends Application{
 
         //här adderar jag en eventhandlar till varje separat knapp som är tillagd i listan
         for (CustomButton button : buttons) {
-            button.setOnAction(new EventHandler<ActionEvent>() {
+            button.setOnAction(new EventHandler<ActionEvent>() { //Allt inom {} är den nya metoden EventHandler
                 @Override
                 public void handle(ActionEvent event) {
-                    System.out.println("Knapp " + button.getText() + " har klickat på :)");
+                    handleButtons(event);
+                    //System.out.println("Knapp " + button.getText() + " har klickat på :)");
                 }
             });
         }
@@ -152,14 +155,21 @@ public class Graphics <T> extends Application{
 
         switch (name){
             case "Find Path":
+                System.out.println("Find Path clicked");
                 break;
             case "Show Connection":
+                showConnection();
+                System.out.println("Show Connection print");
                 break;
             case "New Place":
+                System.out.println("New Place print");
                 break;
             case "New Connection":
+                newConnection();
+                System.out.println("New Connection print");
                 break;
             case "Change Connection":
+                System.out.println("Change Connection clicked");
                 break;
         }
     }
@@ -297,14 +307,111 @@ public class Graphics <T> extends Application{
             System.exit(0);
         } else {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setHeaderText("Confirmation:");
             alert.setContentText("Unsaved changes, exit anyway?");
             Optional<ButtonType> result = alert.showAndWait();
             if(result.isPresent() && result.get().equals(ButtonType.CANCEL)){
                 event.consume(); //"konsumerar" aka avbryter eventet, så stängningen kommer ej ske
-            } else {
+            } else if(result.isPresent() && result.get().equals(ButtonType.OK)){
                 Stage stageToClose = (Stage) scene.getWindow();
                 stageToClose.close();
             }
         }
+    }
+
+    public void newConnection(){
+        //ifall användaren ej valt två platser
+//        Alert placeError = new Alert(Alert.AlertType.ERROR);
+//        placeError.setHeaderText("Error:");
+//        placeError.setContentText("Two places must be connected!");
+//        placeError.showAndWait();
+
+        Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
+        HBox hBox1 = new HBox(6); //skapar två hboxar (två "rader"), med padding mellan dess children (komponenter)
+        HBox hBox2 = new HBox(12);
+        VBox vBox = new VBox(5);
+        vBox.getChildren().addAll(hBox1, hBox2); //skapar vbox som lägger hboxarna efter varandra vertikalt
+        BorderPane borderPane = new BorderPane();
+        borderPane.setCenter(vBox); //CENTRERAS EJ - borderpanen e värdelös atm
+        confirmation.getDialogPane().setContent(borderPane); //lägger till borderPanen i alert
+
+        confirmation.setHeaderText("Connection from blabla till bleble");
+
+        Label nameLabel = new Label("Name:");
+        TextField nameField = new TextField();
+        hBox1.getChildren().addAll(nameLabel, nameField);
+
+        Label timeLabel = new Label("Time:");
+        TextField timeField = new TextField();
+        hBox2.getChildren().addAll(timeLabel, timeField);
+
+        Optional<ButtonType> result = confirmation.showAndWait();
+
+        if(result.isPresent() && result.get().equals(ButtonType.CANCEL)){
+            return;
+        } else if(result.isPresent() && result.get().equals(ButtonType.OK)){
+            String name = nameField.getText();
+            String time = timeField.getText();
+            if(name.isBlank() || name.isEmpty()){
+                showError("Name cannot be empty!");
+            } else if(!time.matches("\\d+")){ //ifall strängen inte bara innehåller siffror
+                showError("Time must be in numbers!");
+            } else{
+                //listGraph.connect(); //de två noderna som valts
+                //skapa linje mellan de för att visualisera förbindelsen?
+            }
+        }
+    }
+    
+    public void showConnection(){
+        Set<City> nodes = listGraph.getNodes(); //Hämtar alla noder
+        City cityStart = new City("temp1"); //Kanske ska flyttas ut till instansvariabel?
+        City cityEnd = new City("temp2"); //Måste ändra sen så att man hämtar de faktiskta noderna?
+
+        if (cityStart == null || cityEnd == null){   //Om det inte finns två markerade platser i kartan visas felmeddelande
+            showError("Error: Select two cities.");
+            return;
+        } else if (listGraph.getEdgeBetween(cityStart, cityEnd) == null){ //Om det inte finns förbindelse mellan platserna visas felmeddelande
+            showError("Error: No connection between citites.");
+            return;
+        } 
+
+        //Visar ett fönster med uppgifter om förbindelsen.
+        Alert alert = new Alert (Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Connection");
+        alert.setHeaderText("Connection from blablabla to buuu");
+
+        //Gör första HBox:en
+        Label name = new Label("Name: ");
+        TextField nameField = new TextField();
+        HBox hboxOne = new HBox(8); //sätter padding horisontellt
+        hboxOne.getChildren().addAll(name, nameField);
+
+        //Gör andra HBox:en
+        Label time = new Label("Time: ");
+        TextField timeField = new TextField();
+        HBox hboxTwo = new HBox(13);
+        hboxTwo.getChildren().addAll(time, timeField);
+
+        //Lägg till de i en VBox
+        VBox vbox = new VBox(10);
+        vbox.getChildren().addAll(hboxOne, hboxTwo);
+        vbox.setAlignment(Pos.CENTER);
+
+        //placerar de i mitten av en BorderPane
+        // BorderPane borderPane = new BorderPane();
+        // borderPane.setCenter(vbox);
+        // borderPane.setAlignment(vbox, Pos.CENTER);
+
+        alert.getDialogPane().setContent(vbox);
+        alert.showAndWait();
+    }
+
+    private void showError(String errorMessage){
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText(null);
+        alert.setContentText(errorMessage);
+        alert.showAndWait();
     }
 }
