@@ -38,7 +38,7 @@ public class Graphics <T> extends Application{
     private String imageUrl = "europa.gif";
     private ListGraph listGraph = new ListGraph();
     private TextField nameField;
-    private boolean hasSaved = false;
+    private boolean hasSaved = true;
     public Scene scene;
 
     private Pane imagePane;
@@ -143,6 +143,7 @@ public class Graphics <T> extends Application{
                     for(CustomButton b : buttons){
                         b.setDisable(false);
                     }
+                    hasSaved = false;
                 }
                 System.out.println("New Map menu item clicked!");
                 break;
@@ -252,13 +253,13 @@ public class Graphics <T> extends Application{
             CirclePlace place = (CirclePlace) event.getSource();
 
             if(place.isSelected()){
-                place.setSelected(false);
+                place.setSelected(false); //ifall den redan är selected blir den unselected (blå) av detta klick
                 if(place == place1){
-                    place1 = null;
+                    place1 = null; //gör att man inte kan skapa ny place på detta ställe
                 }else{
                     place2 = null;
                 }
-            }else{
+            }else{ //ifall den inte är selected
                 if(place1 == null){
                     place1 = place;
                     place.setSelected(true);
@@ -312,27 +313,27 @@ public class Graphics <T> extends Application{
             // }
 
             writer.close();
+            hasSaved = true;
         } catch (IOException e){
             throw new RuntimeException("Error: No such file found.");
         }
     }
 
-    private boolean harOsparadeChanges(){
-        return false; //skrev dit detta för metoden va tom /Linn
-    }
+    //private boolean harOsparadeChanges(){
+        //return false; //skrev dit detta för metoden va tom /Linn
+    //}
 
     private void open(){ //Övningsuppgift 4 använder en map för att konvertera String till Node, kanske behövs???
-        if (harOsparadeChanges()) {
+        if (hasSaved == false) {
             // Visa dialogruta för att fråga användaren om personen vill spara ändringarna
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("Osparade ändringar");
-            alert.setHeaderText("Det finns osparade ändringar i kartan");
-            alert.setContentText("Vill du spara ändringarna innan du öppnar en ny karta?");
+            alert.setTitle("Warning");
+            alert.setHeaderText("Unsaved changes, continue anyways?");
     
             //gör knapparna till dialog fönstret, ButtonType är typen av knappar som finns i ett alert dialogfönster, trodde det funka med vanliga knappar först men tydligen inte, detta är en subtyp till button
             //ButtonType saveButton = new ButtonType("Spara"); //denna behövs icke
             ButtonType okButton = new ButtonType("OK");
-            ButtonType cancelButton = new ButtonType("Avbryt", ButtonData.CANCEL_CLOSE);
+            ButtonType cancelButton = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
     
             alert.getButtonTypes().setAll(okButton, cancelButton); //sätter alla knappar i dialogfönstret //tog bort saveButton härifrån
     
@@ -352,7 +353,7 @@ public class Graphics <T> extends Application{
         }
         
         if (!hasSaved){ //Om användaren inte har sparad info så skicka felmeddelande
-            System.out.println("Error: No saved information.");
+            showError("No saved information!");
         } else { //Annars öppna europa.graph
             try {
                 FileReader file = new FileReader("europa.graph"); //Referens till filen
@@ -403,7 +404,7 @@ public class Graphics <T> extends Application{
             System.exit(0);
         } else {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setHeaderText("Confirmation:");
+            alert.setHeaderText("Warning");
             alert.setContentText("Unsaved changes, exit anyway?");
             Optional<ButtonType> result = alert.showAndWait();
             if(result.isPresent() && result.get().equals(ButtonType.CANCEL)){
@@ -417,21 +418,26 @@ public class Graphics <T> extends Application{
 
     public void newConnection(){
         //ifall användaren ej valt två platser
-//        Alert placeError = new Alert(Alert.AlertType.ERROR);
-//        placeError.setHeaderText("Error:");
-//        placeError.setContentText("Two places must be connected!");
-//        placeError.showAndWait();
+        if(place1 == null || place2 == null){
+            showError("Two places must be connected!");
+            return;
+        }
 
+        //ifall connection redan finns mellan de valda platserna
+        if(listGraph.pathExists(place1, place2)){
+            showError("Connection already exists!");
+            return;
+        }
+
+        //skapar dialogrutan
         Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
         HBox hBox1 = new HBox(6); //skapar två hboxar (två "rader"), med padding mellan dess children (komponenter)
         HBox hBox2 = new HBox(12);
         VBox vBox = new VBox(5);
         vBox.getChildren().addAll(hBox1, hBox2); //skapar vbox som lägger hboxarna efter varandra vertikalt
-        BorderPane borderPane = new BorderPane();
-        borderPane.setCenter(vBox); //CENTRERAS EJ - borderpanen e värdelös atm
-        confirmation.getDialogPane().setContent(borderPane); //lägger till borderPanen i alert
+        confirmation.getDialogPane().setContent(vBox); //lägger till vboxen i alert
 
-        confirmation.setHeaderText("Connection from blabla till bleble");
+        confirmation.setHeaderText("Connection from " + place1.getName() + " till " + place2.getName());
 
         Label nameLabel = new Label("Name:");
         TextField nameField = new TextField();
@@ -443,6 +449,7 @@ public class Graphics <T> extends Application{
 
         Optional<ButtonType> result = confirmation.showAndWait();
 
+        //hantera användarens input på dialogrutan
         if(result.isPresent() && result.get().equals(ButtonType.CANCEL)){
             return;
         } else if(result.isPresent() && result.get().equals(ButtonType.OK)){
@@ -450,8 +457,10 @@ public class Graphics <T> extends Application{
             String time = timeField.getText();
             if(name.isBlank() || name.isEmpty()){
                 showError("Name cannot be empty!");
+                return;
             } else if(!time.matches("\\d+")){ //ifall strängen inte bara innehåller siffror
                 showError("Time must be in numbers!");
+                return;
             } else{
                 //listGraph.connect(); //de två noderna som valts
                 //skapa linje mellan de för att visualisera förbindelsen?
