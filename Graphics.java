@@ -9,6 +9,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 
 import java.awt.image.BufferedImage;
@@ -50,6 +51,7 @@ public class Graphics <T> extends Application{
     private CirclePlace place2;
 
     private List<CustomButton> buttons;
+    private VBox root = new VBox();
 
     public static void main(String[]args){
         launch(args);
@@ -119,7 +121,6 @@ public class Graphics <T> extends Application{
         imageView = new ImageView();
         imagePane.getChildren().add(imageView);
 
-        VBox root = new VBox();
         root.getChildren().addAll(vBox, buttonPane, imagePane);
 
         //här skapas en scene med vbox som root och måtten/storleken
@@ -271,6 +272,7 @@ public class Graphics <T> extends Application{
                     place.setSelected(true);
                 }
             }
+            System.out.print("platserna när de skapas/trycks på" + place1.getX() + place2.getY() + place2.getX() + place2.getY());
         }
     }
 
@@ -502,7 +504,15 @@ public class Graphics <T> extends Application{
                 return;
             } else{
                 //listGraph.connect(); //de två noderna som valts
-                //skapa linje mellan de för att visualisera förbindelsen?
+                //skapa linje mellan platserna
+                System.out.print("Im here!");
+                Line line = new Line(place1.getX(), place1.getY(), place2.getX(), place2.getY());
+                System.out.println("Cirklen:" + place1.getX() + place1.getY() + place2.getX() + place2.getY());
+                System.out.println("Linjen:" +line.getStartX() + line.getStartY() + line.getEndX() + line.getEndY());
+                line.setStroke(Color.BLACK); // Ställer in linjens färg till svart
+                line.setStrokeWidth(3.0); //sätter linjens tjocklek
+                root.getChildren().add(line);
+
             }
         }
     }
