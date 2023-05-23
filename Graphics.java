@@ -503,15 +503,13 @@ public class Graphics <T> extends Application{
                 showError("Time must be in numbers!");
                 return;
             } else{
-                //listGraph.connect(); //de två noderna som valts
-                //skapa linje mellan platserna
-                System.out.print("Im here!");
-                Line line = new Line(place1.getX(), place1.getY(), place2.getX(), place2.getY());
-                System.out.println("Cirklen:" + place1.getX() + place1.getY() + place2.getX() + place2.getY());
-                System.out.println("Linjen:" +line.getStartX() + line.getStartY() + line.getEndX() + line.getEndY());
-                line.setStroke(Color.BLACK); // Ställer in linjens färg till svart
-                line.setStrokeWidth(3.0); //sätter linjens tjocklek
-                root.getChildren().add(line);
+
+                Line connectionLine = new Line(place1.getX(), place1.getY(), place2.getX(), place2.getY());
+                connectionLine.setStroke(Color.BLACK);
+                connectionLine.setStrokeWidth(3.0);
+                imagePane.getChildren().add(connectionLine);
+                
+                
 
             }
         }
