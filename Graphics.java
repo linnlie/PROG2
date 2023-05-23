@@ -5,6 +5,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
@@ -15,6 +16,7 @@ import java.util.List;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.*;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -235,6 +237,7 @@ public class Graphics <T> extends Application{
                 imagePane.getChildren().add(labelNewPlace);
 
                 //nu vet vi att användaren har lagt till en plats, så saved är false
+                hasSaved = false;
 
                 labelNewPlace.setDisable(true);
                 newPlace.setOnMouseClicked(new PlaceClickHandler());
@@ -267,6 +270,42 @@ public class Graphics <T> extends Application{
                     place2 = place;
                     place.setSelected(true);
                 }
+            }
+        }
+    }
+
+    class FindPathHandler implements EventHandler<ActionEvent>{
+
+        @Override
+        public void handle(ActionEvent event){
+
+            if(place1 == null || place2 == null){
+                showError("Two places must be selected!");
+            }else if(!listGraph.pathExists(place1, place2)){
+                showError("There is no path between these two places!");
+            }
+            else{
+                List<Edge<CirclePlace>> listOfPath = listGraph.getPath(place1, place2);
+
+                Alert alrt = new Alert(AlertType.INFORMATION);
+                alrt.setTitle("Message");
+                alrt.setHeaderText("The Path from  " + place1.getName() + " to " + place2.getName() + ":");
+                String innehåll = "";
+                int totalWeight = 0;
+
+                for(Edge<CirclePlace> nuvaranceEdge : listOfPath){
+                    String destination = nuvaranceEdge.getDestination().getName();
+                    String edgeName = nuvaranceEdge.getName();
+                    int edgeWeight = nuvaranceEdge.getWeight();
+                    innehåll += "to " + destination + " by " + edgeName + " takes " + edgeWeight + "\n";
+                    totalWeight += edgeWeight;
+                }
+
+                innehåll += "Total " + totalWeight;
+                TextArea textArea = new TextArea(innehåll);
+                alrt.getDialogPane().setContent(textArea);
+                textArea.setEditable(false);
+                alrt.showAndWait();
             }
         }
     }
