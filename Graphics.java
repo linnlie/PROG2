@@ -272,7 +272,6 @@ public class Graphics <T> extends Application{
                     place.setSelected(true);
                 }
             }
-            System.out.print("platserna när de skapas/trycks på" + place1.getX() + place2.getY() + place2.getX() + place2.getY());
         }
     }
 
@@ -359,10 +358,6 @@ public class Graphics <T> extends Application{
             throw new RuntimeException("Error: No such file found.");
         }
     }
-
-    //private boolean harOsparadeChanges(){
-        //return false; //skrev dit detta för metoden va tom /Linn
-    //}
 
     private void open(){ //Övningsuppgift 4 använder en map för att konvertera String till Node, kanske behövs???
         if (hasSaved == false) {
@@ -503,14 +498,11 @@ public class Graphics <T> extends Application{
                 showError("Time must be in numbers!");
                 return;
             } else{
-
+                //listGraph.connect(place1, place2, name, Integer.valueOf(time)); //funkar ej rn för har inte lagt till place1 och place2 i map som connect använder
                 Line connectionLine = new Line(place1.getX(), place1.getY(), place2.getX(), place2.getY());
                 connectionLine.setStroke(Color.BLACK);
                 connectionLine.setStrokeWidth(3.0);
                 imagePane.getChildren().add(connectionLine);
-                
-                
-
             }
         }
     }
