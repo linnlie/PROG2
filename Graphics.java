@@ -198,6 +198,147 @@ public class Graphics <T> extends Application{
         }
     }
 
+    //    private void saveExpriement(String url, Graph<T> graph){
+//        try {
+//            String filePath = "europa.graph";
+//            FileWriter fileWriter = new FileWriter(filePath);
+//            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+//
+//            //skriv url till bild filen
+//            bufferedWriter.write(url);
+//            bufferedWriter.newLine();
+//
+//            //skriva ut noderna
+//            for(T t : graph.getNodes()){
+//                bufferedWriter.write(t.getName)
+//            }
+//        } catch (Exception e) {
+//            // TODO: handle exception
+//        }
+//    }
+
+    private void save(){
+        try {
+            String filePath = "europa.graph"; //Referens till filen vi ska skriva till
+            BufferedWriter writer = new BufferedWriter(new FileWriter(filePath)); //Skapar ny med filePath
+            writer.write("file:" + imageUrl); //Skriver ut url:en
+            StringBuilder sb = new StringBuilder(); //Skapar stringBuilder som är tom just nu
+
+            Set<T> nodeSet = listGraph.getNodes(); ///Hämtar alla noder
+            for (T node : nodeSet){ //Går igenom varje nod i nod-Settet
+                sb.append(nameField + ";"); //Lägger till nodens namn; i stringBuildern
+                //Användaren skriver in ett namn, kommer nog behöva hitta det i en lista. Ändra alltså nameField sen.
+                //Sedan ska vi också lägga till koordinaterna
+            }
+            sb.deleteCharAt(nodeSet.size()); //size - 1? Vill ta bort sista ;
+            writer.write(sb.toString()); //Skriver ut stringBuildern i filen
+
+            // //Hittar och skriver ut förbindelserna
+            // Collection <Edge<T>> edges = listGraph.getEdgesFrom();
+            // for (T node : nodeSet){
+            //     //Loopa igenom varje edge, skriv ut från-noden, till-noden, namnet å vikten
+            // }
+
+            writer.close();
+            hasSaved = true;
+        } catch (IOException e){
+            throw new RuntimeException("Error: No such file found.");
+        }
+    }
+
+    private void open(){ //Övningsuppgift 4 använder en map för att konvertera String till Node, kanske behövs???
+        if (hasSaved == false) {
+            // Visa dialogruta för att fråga användaren om personen vill spara ändringarna
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Warning");
+            alert.setHeaderText("Unsaved changes, continue anyways?");
+
+            //gör knapparna till dialog fönstret, ButtonType är typen av knappar som finns i ett alert dialogfönster, trodde det funka med vanliga knappar först men tydligen inte, detta är en subtyp till button
+            //ButtonType saveButton = new ButtonType("Spara"); //denna behövs icke
+            ButtonType okButton = new ButtonType("OK");
+            ButtonType cancelButton = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
+
+            alert.getButtonTypes().setAll(okButton, cancelButton); //sätter alla knappar i dialogfönstret //tog bort saveButton härifrån
+
+            Optional<ButtonType> result = alert.showAndWait(); //väntar med att sätta knapp typen tills användaren trycker på någon, rätt häftigt ändå
+
+            switch(result.get().getText()){
+                //spara de osparade ändringarna
+                case "Spara":
+                    save();
+                    break;
+                case "OK":
+                    //förkasta de osparade ändringarna och det nya "dokumentet" öppnas
+                default:
+                    //avbryt
+                    return;
+            }
+        }
+
+        if (!hasSaved){ //Om användaren inte har sparad info så skicka felmeddelande
+            showError("No saved information!");
+        } else { //Annars öppna europa.graph
+            try {
+                FileReader file = new FileReader("europa.graph"); //Referens till filen
+                BufferedReader reader = new BufferedReader(file); //Läser in filen rad för rad
+
+                //Återskapar objekt från filen:
+                String line; //Tom sträng
+                reader.readLine(); //läser första raden file:europa.gif
+                reader.readLine(); //Läser andra raden med uppradningen av alla städer
+                //Alla rader efter detta ser ut ex: Stockholm;Oslo;Train;3
+                while ((line = reader.readLine()) != null){ //läser en rad i taget genom hela filen tills den tar slut
+                    String[] parts = line.split(";"); //Delar upp noderna genom ;
+                    T cityStart = (T) parts[0]; //Omvandlar String till T
+                    T cityEnd = (T) parts[1];
+                    String tag = parts[2];
+                    int weight = Integer.parseInt(parts[3]); //Omvandlar vikten från string till int
+
+                    //Lägger till noderna i grafen
+                    listGraph.add(cityStart);
+                    listGraph.add(cityEnd);
+
+                    //Skapar en koppling mellan dem
+                    listGraph.connect(cityStart, cityEnd, tag, weight);
+                }
+                file.close();
+                reader.close();
+            } catch (IOException e){
+                throw new RuntimeException("Error: No such file found.");
+            }
+        }
+    }
+
+    public void saveImage(){
+        try{
+            WritableImage image = scene.snapshot(null); //skapar bild av scenen - snapshot kan bara vara WritableImage (som är en bildtyp för att representera bilder i minnet)
+            BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null); //bilden omvandlas till bufferedimage via swingFXUtils, vilket krävs pga imageio kan bara hantera bufferedimages
+            ImageIO.write(bufferedImage, "png", new File("capture.png")); //imageIO kan spara bilder i olika format
+        } catch (IOException e){
+            Alert alert = new Alert(Alert.AlertType.ERROR, "IO-error " + e.getMessage());
+            alert.showAndWait();
+        }
+    }
+
+    public void exit(WindowEvent event){
+        if(hasSaved){
+            //Stage stageToClose = (Stage) scene.getWindow();
+            //stageToClose.close();
+            System.exit(0);
+        } else {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setHeaderText("Warning");
+            alert.setContentText("Unsaved changes, exit anyway?");
+            Optional<ButtonType> result = alert.showAndWait();
+            if(result.isPresent() && result.get().equals(ButtonType.CANCEL)){
+                event.consume(); //"konsumerar" aka avbryter eventet, så stängningen kommer ej ske
+            } else if(result.isPresent() && result.get().equals(ButtonType.OK)){
+                Stage stageToClose = (Stage) scene.getWindow();
+                stageToClose.close();
+            }
+        }
+    }
+
     class NewPlaceHandler implements EventHandler<ActionEvent>{
         @Override
         public void handle(ActionEvent event){
@@ -229,6 +370,9 @@ public class Graphics <T> extends Application{
                 placesList.add(newPlace);
                 imagePane.getChildren().add(newPlace);
                 newPlace.setId(name);
+
+                //Av linn: innan lades den bara till i linus arraylist, inte i nodes grafen i listgraph som våra listgraph metoder använder
+                listGraph.add(newPlace);
 
                 Label labelNewPlace = new Label(name);
                 labelNewPlace.setFont(Font.font("Verdana", FontWeight.SEMI_BOLD, 20));
@@ -311,147 +455,6 @@ public class Graphics <T> extends Application{
         }
     }
 
-//    private void saveExpriement(String url, Graph<T> graph){
-//        try {
-//            String filePath = "europa.graph";
-//            FileWriter fileWriter = new FileWriter(filePath);
-//            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-//
-//            //skriv url till bild filen
-//            bufferedWriter.write(url);
-//            bufferedWriter.newLine();
-//
-//            //skriva ut noderna
-//            for(T t : graph.getNodes()){
-//                bufferedWriter.write(t.getName)
-//            }
-//        } catch (Exception e) {
-//            // TODO: handle exception
-//        }
-//    }
-
-    private void save(){
-        try {
-            String filePath = "europa.graph"; //Referens till filen vi ska skriva till
-            BufferedWriter writer = new BufferedWriter(new FileWriter(filePath)); //Skapar ny med filePath
-            writer.write("file:" + imageUrl); //Skriver ut url:en
-            StringBuilder sb = new StringBuilder(); //Skapar stringBuilder som är tom just nu
-            
-            Set<T> nodeSet = listGraph.getNodes(); ///Hämtar alla noder
-            for (T node : nodeSet){ //Går igenom varje nod i nod-Settet
-                sb.append(nameField + ";"); //Lägger till nodens namn; i stringBuildern
-                //Användaren skriver in ett namn, kommer nog behöva hitta det i en lista. Ändra alltså nameField sen.
-                //Sedan ska vi också lägga till koordinaterna
-            }
-            sb.deleteCharAt(nodeSet.size()); //size - 1? Vill ta bort sista ;
-            writer.write(sb.toString()); //Skriver ut stringBuildern i filen
-
-            // //Hittar och skriver ut förbindelserna
-            // Collection <Edge<T>> edges = listGraph.getEdgesFrom();
-            // for (T node : nodeSet){
-            //     //Loopa igenom varje edge, skriv ut från-noden, till-noden, namnet å vikten
-            // }
-
-            writer.close();
-            hasSaved = true;
-        } catch (IOException e){
-            throw new RuntimeException("Error: No such file found.");
-        }
-    }
-
-    private void open(){ //Övningsuppgift 4 använder en map för att konvertera String till Node, kanske behövs???
-        if (hasSaved == false) {
-            // Visa dialogruta för att fråga användaren om personen vill spara ändringarna
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("Warning");
-            alert.setHeaderText("Unsaved changes, continue anyways?");
-    
-            //gör knapparna till dialog fönstret, ButtonType är typen av knappar som finns i ett alert dialogfönster, trodde det funka med vanliga knappar först men tydligen inte, detta är en subtyp till button
-            //ButtonType saveButton = new ButtonType("Spara"); //denna behövs icke
-            ButtonType okButton = new ButtonType("OK");
-            ButtonType cancelButton = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
-    
-            alert.getButtonTypes().setAll(okButton, cancelButton); //sätter alla knappar i dialogfönstret //tog bort saveButton härifrån
-    
-            Optional<ButtonType> result = alert.showAndWait(); //väntar med att sätta knapp typen tills användaren trycker på någon, rätt häftigt ändå
-            
-            switch(result.get().getText()){
-                //spara de osparade ändringarna
-                case "Spara":
-                    save();
-                    break;
-                case "OK":
-                //förkasta de osparade ändringarna och det nya "dokumentet" öppnas
-                default:
-                //avbryt 
-                return;
-            }
-        }
-        
-        if (!hasSaved){ //Om användaren inte har sparad info så skicka felmeddelande
-            showError("No saved information!");
-        } else { //Annars öppna europa.graph
-            try {
-                FileReader file = new FileReader("europa.graph"); //Referens till filen
-                BufferedReader reader = new BufferedReader(file); //Läser in filen rad för rad
-
-                //Återskapar objekt från filen:
-                String line; //Tom sträng
-                reader.readLine(); //läser första raden file:europa.gif
-                reader.readLine(); //Läser andra raden med uppradningen av alla städer
-                //Alla rader efter detta ser ut ex: Stockholm;Oslo;Train;3
-                while ((line = reader.readLine()) != null){ //läser en rad i taget genom hela filen tills den tar slut
-                    String[] parts = line.split(";"); //Delar upp noderna genom ;
-                    T cityStart = (T) parts[0]; //Omvandlar String till T
-                    T cityEnd = (T) parts[1];
-                    String tag = parts[2];
-                    int weight = Integer.parseInt(parts[3]); //Omvandlar vikten från string till int
-
-                    //Lägger till noderna i grafen
-                    listGraph.add(cityStart);
-                    listGraph.add(cityEnd);
-
-                    //Skapar en koppling mellan dem
-                    listGraph.connect(cityStart, cityEnd, tag, weight);
-                }
-                file.close();
-                reader.close();
-            } catch (IOException e){
-                throw new RuntimeException("Error: No such file found.");
-            }
-        }
-    }
-
-    public void saveImage(){
-        try{
-            WritableImage image = scene.snapshot(null); //skapar bild av scenen - snapshot kan bara vara WritableImage (som är en bildtyp för att representera bilder i minnet)
-            BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null); //bilden omvandlas till bufferedimage via swingFXUtils, vilket krävs pga imageio kan bara hantera bufferedimages
-            ImageIO.write(bufferedImage, "png", new File("capture.png")); //imageIO kan spara bilder i olika format
-        } catch (IOException e){
-            Alert alert = new Alert(Alert.AlertType.ERROR, "IO-error " + e.getMessage());
-            alert.showAndWait();
-        }
-    }
-
-    public void exit(WindowEvent event){
-        if(hasSaved){
-            //Stage stageToClose = (Stage) scene.getWindow();
-            //stageToClose.close();
-            System.exit(0);
-        } else {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setHeaderText("Warning");
-            alert.setContentText("Unsaved changes, exit anyway?");
-            Optional<ButtonType> result = alert.showAndWait();
-            if(result.isPresent() && result.get().equals(ButtonType.CANCEL)){
-                event.consume(); //"konsumerar" aka avbryter eventet, så stängningen kommer ej ske
-            } else if(result.isPresent() && result.get().equals(ButtonType.OK)){
-                Stage stageToClose = (Stage) scene.getWindow();
-                stageToClose.close();
-            }
-        }
-    }
-
     public void newConnection(){
         //ifall användaren ej valt två platser
         if(place1 == null || place2 == null){
@@ -498,7 +501,10 @@ public class Graphics <T> extends Application{
                 showError("Time must be in numbers!");
                 return;
             } else{
-                //listGraph.connect(place1, place2, name, Integer.valueOf(time)); //funkar ej rn för har inte lagt till place1 och place2 i map som connect använder
+                //lägger till förbindelsen i städernas sets via connect-metoden
+                listGraph.connect(place1, place2, name, Integer.valueOf(time));
+
+                //skapar den grafiska förbindelsen (linjen)
                 Line connectionLine = new Line(place1.getX(), place1.getY(), place2.getX(), place2.getY());
                 connectionLine.setStroke(Color.BLACK);
                 connectionLine.setStrokeWidth(3.0);
@@ -519,6 +525,11 @@ public class Graphics <T> extends Application{
 //            showError("Error: No connection between citites.");
 //            return;
 //        }
+    //kommentar från linn så hon inte glömmer hennes spånande:
+    //ska man kanske kolla först om place1 och place2 (de två nedtryckta platserna (se placeClickHandler)) är null och ifall ja visa alert (på samma sätt som jag gjort i new conenction)
+    //och sen kolla via pathexists ifall förbindelsen finns - ifall nej visa alert
+    //och seeen använda getedgebetween plats1 och plats2 för att få förbindelsen
+    //och sedan sätta textfälten i alerterna med infon om förbindelsen till oredigerbara också med setEditable(false)!
 //
 //        //Visar ett fönster med uppgifter om förbindelsen.
 //        Alert alert = new Alert (Alert.AlertType.CONFIRMATION);
@@ -550,6 +561,8 @@ public class Graphics <T> extends Application{
 //        alert.getDialogPane().setContent(vbox);
 //        alert.showAndWait();
 //    }
+
+
 
     private void showError(String errorMessage){
         Alert alert = new Alert(Alert.AlertType.ERROR);
