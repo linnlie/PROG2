@@ -37,7 +37,8 @@ public class Graphics<T> extends Application {
     private ListGraph listGraph = new ListGraph();
     private TextField nameField;
     private boolean hasSaved = true;
-    public Scene scene;
+    private Scene scene;
+    private Stage primaryStage;
 
     private Pane imagePane;
     private CustomButton newPlaceButton;
@@ -54,6 +55,7 @@ public class Graphics<T> extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        this.primaryStage = primaryStage;
         // lista med underrubriker för "file" menyn
         List<String> menuNamnen = List.of("New Map", "Open", "Save", "Save Image", "Exit");
         MenuBar menuBar = new MenuBar();
@@ -257,7 +259,7 @@ public class Graphics<T> extends Application {
                 City city = new City(cityName, x ,y);
                 listGraph.add(city);
                 map.put(cityName, city);
-                System.out.println(city);
+                imagePane.getChildren().add(city);//Lägger till city i scenen
             }
     
             // Alla rader efter detta ser ut ex: Stockholm;Oslo;Train;3
@@ -281,7 +283,7 @@ public class Graphics<T> extends Application {
     }
 
 
-    public void saveImage() {
+    private void saveImage() {
         try {
             // skapar bild av scenen - snapshot kan bara vara WritableImage (som är en bildtyp för att representera bilder i minnet)
             WritableImage image = scene.snapshot(null); 
@@ -295,7 +297,7 @@ public class Graphics<T> extends Application {
     }
 
 
-    public void exit(WindowEvent event) {
+    private void exit(WindowEvent event) {
         if (hasSaved) {
             // Stage stageToClose = (Stage) scene.getWindow();
             // stageToClose.close();
@@ -315,7 +317,7 @@ public class Graphics<T> extends Application {
     }
 
 
-    class NewPlaceHandler implements EventHandler<ActionEvent> {
+    private class NewPlaceHandler implements EventHandler<ActionEvent> {
         @Override
         public void handle(ActionEvent event) {
             newPlaceButton.setDisable(true);
@@ -325,7 +327,7 @@ public class Graphics<T> extends Application {
     }
 
 
-    class MapClickHandler implements EventHandler<MouseEvent> {
+    private class MapClickHandler implements EventHandler<MouseEvent> {
         @Override
         public void handle(MouseEvent event) {
             double x = event.getX();
@@ -372,7 +374,7 @@ public class Graphics<T> extends Application {
     }
 
 
-    class PlaceClickHandler implements EventHandler<MouseEvent> {
+    private class PlaceClickHandler implements EventHandler<MouseEvent> {
         @Override
         public void handle(MouseEvent event) {
             City place = (City) event.getSource();
@@ -397,7 +399,7 @@ public class Graphics<T> extends Application {
     }
 
 
-    class FindPathHandler implements EventHandler<ActionEvent> {
+    private class FindPathHandler implements EventHandler<ActionEvent> {
         @Override
         public void handle(ActionEvent event) {
 
@@ -432,7 +434,7 @@ public class Graphics<T> extends Application {
     }
 
 
-    public void newConnection() {
+    private void newConnection() {
         // ifall användaren ej valt två platser
         if (place1 == null || place2 == null) {
             showError("Two places must be connected!");
@@ -490,7 +492,7 @@ public class Graphics<T> extends Application {
     }
 
 
-    public void showConnection() {
+    private void showConnection() {
         Set<City> nodes = listGraph.getNodes(); // Hämtar alla noder
         Edge edge = listGraph.getEdgeBetween(place1, place2);
 
@@ -525,7 +527,7 @@ public class Graphics<T> extends Application {
     }
 
 
-    public void changeConnection() {
+    private void changeConnection() {
         Set<City> nodes = listGraph.getNodes(); // Hämtar alla noder
         Edge edge = listGraph.getEdgeBetween(place1, place2);
 
