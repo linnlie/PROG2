@@ -1,10 +1,8 @@
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
@@ -17,19 +15,16 @@ import java.util.List;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.*;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.ImagePattern;
 import javafx.scene.image.Image;
 import java.io.*;
 import java.util.*;
 import javafx.embed.swing.SwingFXUtils;
 import javax.imageio.ImageIO;
-import javafx.geometry.*;
 
 import javafx.scene.control.ButtonBar.ButtonData;
 
@@ -46,9 +41,9 @@ public class Graphics <T> extends Application{
 
     private Pane imagePane;
     private CustomButton newPlaceButton;
-    private ArrayList<CirclePlace> placesList = new ArrayList<>();
-    private CirclePlace place1;
-    private CirclePlace place2;
+    private ArrayList<City> placesList = new ArrayList<>();
+    private City place1;
+    private City place2;
 
     private List<CustomButton> buttons;
     private VBox root = new VBox();
@@ -220,24 +215,23 @@ public class Graphics <T> extends Application{
     private void save(){
         try {
             String filePath = "europa.graph"; //Referens till filen vi ska skriva till
-            BufferedWriter writer = new BufferedWriter(new FileWriter(filePath)); //Skapar ny med filePath
-            writer.write("file:" + imageUrl); //Skriver ut url:en
+            PrintWriter writer = new PrintWriter(new FileWriter(filePath)); //Skapar ny med filePath
+            writer.println("file:" + imageUrl); //Skriver ut url:en
             StringBuilder sb = new StringBuilder(); //Skapar stringBuilder som är tom just nu
 
-            Set<T> nodeSet = listGraph.getNodes(); ///Hämtar alla noder
-            for (T node : nodeSet){ //Går igenom varje nod i nod-Settet
-                sb.append(nameField + ";"); //Lägger till nodens namn; i stringBuildern
-                //Användaren skriver in ett namn, kommer nog behöva hitta det i en lista. Ändra alltså nameField sen.
-                //Sedan ska vi också lägga till koordinaterna
+            Set<City> nodeSet = listGraph.getNodes(); ///Hämtar alla noder
+            for (City node : nodeSet){ //Går igenom varje nod i nod-Settet
+                Collection <Edge<T>> edges = new HashSet<>();
+                //edges.add(listGraph.getEdgesFrom(node));
+                sb.append(node.getName()).append(";").append(node.getX()).append(";").append(node.getY());
             }
-            sb.deleteCharAt(nodeSet.size()); //size - 1? Vill ta bort sista ;
-            writer.write(sb.toString()); //Skriver ut stringBuildern i filen
+            writer.println(sb.toString()); //Skriver ut stringBuildern i filen
 
             // //Hittar och skriver ut förbindelserna
-            // Collection <Edge<T>> edges = listGraph.getEdgesFrom();
-            // for (T node : nodeSet){
-            //     //Loopa igenom varje edge, skriv ut från-noden, till-noden, namnet å vikten
-            // }
+
+            for (City node : nodeSet){
+            //Loopa igenom varje edge, skriv ut från-noden, till-noden, namnet å vikten
+            }
 
             writer.close();
             hasSaved = true;
@@ -364,7 +358,7 @@ public class Graphics <T> extends Application{
 
             if(result.isPresent()){
                 String name = newPlaceName.getEditor().getText();
-                CirclePlace newPlace = new CirclePlace(name, x, y);
+                City newPlace = new City(name, x, y);
 
                 //addera nya platsen till grafen
                 placesList.add(newPlace);
@@ -398,7 +392,7 @@ public class Graphics <T> extends Application{
     class PlaceClickHandler implements EventHandler<MouseEvent>{
         @Override
         public void handle(MouseEvent event){
-            CirclePlace place = (CirclePlace) event.getSource();
+            City place = (City) event.getSource();
 
             if(place.isSelected()){
                 place.setSelected(false); //ifall den redan är selected blir den unselected (blå) av detta klick
@@ -430,7 +424,7 @@ public class Graphics <T> extends Application{
                 showError("There is no path between these two places!");
             }
             else{
-                List<Edge<CirclePlace>> listOfPath = listGraph.getPath(place1, place2);
+                List<Edge<City>> listOfPath = listGraph.getPath(place1, place2);
 
                 Alert alrt = new Alert(AlertType.INFORMATION);
                 alrt.setTitle("Message");
@@ -438,7 +432,7 @@ public class Graphics <T> extends Application{
                 String innehåll = "";
                 int totalWeight = 0;
 
-                for(Edge<CirclePlace> nuvaranceEdge : listOfPath){
+                for(Edge<City> nuvaranceEdge : listOfPath){
                     String destination = nuvaranceEdge.getDestination().getName();
                     String edgeName = nuvaranceEdge.getName();
                     int edgeWeight = nuvaranceEdge.getWeight();
