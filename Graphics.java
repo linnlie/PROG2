@@ -181,7 +181,7 @@ public class Graphics <T> extends Application{
                 System.out.println("Find Path clicked");
                 break;
             case "Show Connection":
-                //showConnection();
+                showConnection();
                 System.out.println("Show Connection print");
                 break;
             case "New Place":
@@ -513,54 +513,62 @@ public class Graphics <T> extends Application{
         }
     }
     
-//    public void showConnection(){
-//        Set<City> nodes = listGraph.getNodes(); //Hämtar alla noder
-//        City cityStart = new City("temp1"); //Kanske ska flyttas ut till instansvariabel?
-//        City cityEnd = new City("temp2"); //Måste ändra sen så att man hämtar de faktiskta noderna?
-//
-//        if (cityStart == null || cityEnd == null){   //Om det inte finns två markerade platser i kartan visas felmeddelande
-//            showError("Error: Select two cities.");
-//            return;
-//        } else if (listGraph.getEdgeBetween(cityStart, cityEnd) == null){ //Om det inte finns förbindelse mellan platserna visas felmeddelande
-//            showError("Error: No connection between citites.");
-//            return;
-//        }
-    //kommentar från linn så hon inte glömmer hennes spånande:
-    //ska man kanske kolla först om place1 och place2 (de två nedtryckta platserna (se placeClickHandler)) är null och ifall ja visa alert (på samma sätt som jag gjort i new conenction)
-    //och sen kolla via pathexists ifall förbindelsen finns - ifall nej visa alert
-    //och seeen använda getedgebetween plats1 och plats2 för att få förbindelsen
-    //och sedan sätta textfälten i alerterna med infon om förbindelsen till oredigerbara också med setEditable(false)!
-//
-//        //Visar ett fönster med uppgifter om förbindelsen.
-//        Alert alert = new Alert (Alert.AlertType.CONFIRMATION);
-//        alert.setTitle("Connection");
-//        alert.setHeaderText("Connection from blablabla to buuu");
-//
-//        //Gör första HBox:en
-//        Label name = new Label("Name: ");
-//        TextField nameField = new TextField();
-//        HBox hboxOne = new HBox(8); //sätter padding horisontellt
-//        hboxOne.getChildren().addAll(name, nameField);
-//
-//        //Gör andra HBox:en
-//        Label time = new Label("Time: ");
-//        TextField timeField = new TextField();
-//        HBox hboxTwo = new HBox(13);
-//        hboxTwo.getChildren().addAll(time, timeField);
-//
-//        //Lägg till de i en VBox
-//        VBox vbox = new VBox(10);
-//        vbox.getChildren().addAll(hboxOne, hboxTwo);
-//        vbox.setAlignment(Pos.CENTER);
-//
-//        //placerar de i mitten av en BorderPane
-//        // BorderPane borderPane = new BorderPane();
-//        // borderPane.setCenter(vbox);
-//        // borderPane.setAlignment(vbox, Pos.CENTER);
-//
-//        alert.getDialogPane().setContent(vbox);
-//        alert.showAndWait();
-//    }
+   public void showConnection(){
+    System.out.println("showConnection start");
+       Set<City> nodes = listGraph.getNodes(); //Hämtar alla noder
+    //    place1 = new CirclePlace(); //Kanske ska flyttas ut till instansvariabel?
+    //    place2 = new CirclePlace(); //Måste ändra sen så att man hämtar de faktiskta noderna?
+
+       if (place1 == null || place2 == null){   //Om det inte finns två markerade platser i kartan visas felmeddelande
+           showError("Error: Select two cities.");
+           System.out.println("Visar felmeddelande1");
+           return;
+       } else if (!listGraph.pathExists(place1, place2)){ //Om det inte finns förbindelse mellan platserna visas felmeddelande
+           showError("Error: No connection between citites.");
+           System.out.println("Visar felmeddelande2");
+           return;
+       }
+
+       Edge edge = listGraph.getEdgeBetween(place1, place2);
+    // kommentar från linn så hon inte glömmer hennes spånande:
+    // ska man kanske kolla först om place1 och place2 (de två nedtryckta platserna (se placeClickHandler)) är null och ifall ja visa alert (på samma sätt som jag gjort i new conenction)
+    // och sen kolla via pathexists ifall förbindelsen finns - ifall nej visa alert
+    // och seeen använda getedgebetween plats1 och plats2 för att få förbindelsen
+    // och sedan sätta textfälten i alerterna med infon om förbindelsen till oredigerbara också med setEditable(false)!
+
+       //Visar ett fönster med uppgifter om förbindelsen.
+       Alert alert = new Alert (Alert.AlertType.CONFIRMATION);
+       alert.setTitle("Connection");
+       alert.setHeaderText("Connection from " + place1.getName() + " to " + place2.getName());
+
+       //Gör första HBox:en
+       Label name = new Label("Name: ");
+       TextField nameField = new TextField(edge.getName());
+       nameField.setEditable(false);
+       HBox hboxOne = new HBox(8); //sätter padding horisontellt
+       hboxOne.getChildren().addAll(name, nameField);
+
+       //Gör andra HBox:en
+       Label time = new Label("Time: ");
+       TextField timeField = new TextField(Integer.toString(edge.getWeight()));
+       timeField.setEditable(false);
+       HBox hboxTwo = new HBox(13);
+       hboxTwo.getChildren().addAll(time, timeField);
+
+       //Lägg till de i en VBox
+       VBox vbox = new VBox(10);
+       vbox.getChildren().addAll(hboxOne, hboxTwo);
+       vbox.setAlignment(Pos.CENTER);
+
+       //placerar de i mitten av en BorderPane
+       // BorderPane borderPane = new BorderPane();
+       // borderPane.setCenter(vbox);
+       // borderPane.setAlignment(vbox, Pos.CENTER);
+
+       alert.getDialogPane().setContent(vbox);
+       alert.showAndWait();
+       System.out.println("Borde visa Connection");
+   }
 
 
 
