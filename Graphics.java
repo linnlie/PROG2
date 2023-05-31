@@ -247,8 +247,7 @@ public class Graphics<T> extends Application {
         }
     }
 
-    private void open() { // Övningsuppgift 4 använder en map för att konvertera String till Node, kanske
-                          // behövs???
+    private void open() { // Övningsuppgift 4 använder en map för att konvertera String till Node, kanske behövs???
         if (hasSaved == false) {
             // Visa dialogruta för att fråga användaren om personen vill spara ändringarna
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -317,12 +316,8 @@ public class Graphics<T> extends Application {
 
     public void saveImage() {
         try {
-            WritableImage image = scene.snapshot(null); // skapar bild av scenen - snapshot kan bara vara WritableImage
-                                                        // (som är en bildtyp för att representera bilder i minnet)
-            BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null); // bilden omvandlas till bufferedimage
-                                                                                 // via swingFXUtils, vilket krävs pga
-                                                                                 // imageio kan bara hantera
-                                                                                 // bufferedimages
+            WritableImage image = scene.snapshot(null); // skapar bild av scenen - snapshot kan bara vara WritableImage (som är en bildtyp för att representera bilder i minnet)
+            BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null); // bilden omvandlas till bufferedimage via swingFXUtils, vilket krävs pga imageio kan bara hantera bufferedimages
             ImageIO.write(bufferedImage, "png", new File("capture.png")); // imageIO kan spara bilder i olika format
         } catch (IOException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR, "IO-error " + e.getMessage());
@@ -352,10 +347,8 @@ public class Graphics<T> extends Application {
     class NewPlaceHandler implements EventHandler<ActionEvent> {
         @Override
         public void handle(ActionEvent event) {
-
             newPlaceButton.setDisable(true);
             imagePane.setCursor(Cursor.CROSSHAIR);
-
             imagePane.setOnMouseClicked(new MapClickHandler());
         }
     }
@@ -527,25 +520,9 @@ public class Graphics<T> extends Application {
 
     public void showConnection() {
         Set<City> nodes = listGraph.getNodes(); // Hämtar alla noder
-
-        if (place1 == null || place2 == null) { // Om det inte finns två markerade platser i kartan visas felmeddelande
-            showError("Error: Select two cities.");
-            return;
-        } else if (!listGraph.pathExists(place1, place2)) { // Om det inte finns förbindelse mellan platserna visas
-                                                            // felmeddelande
-            showError("Error: No connection between citites.");
-            return;
-        }
-
         Edge edge = listGraph.getEdgeBetween(place1, place2);
-        // kommentar från linn så hon inte glömmer hennes spånande:
-        // ska man kanske kolla först om place1 och place2 (de två nedtryckta platserna
-        // (se placeClickHandler)) är null och ifall ja visa alert (på samma sätt som
-        // jag gjort i new conenction)
-        // och sen kolla via pathexists ifall förbindelsen finns - ifall nej visa alert
-        // och seeen använda getedgebetween plats1 och plats2 för att få förbindelsen
-        // och sedan sätta textfälten i alerterna med infon om förbindelsen till
-        // oredigerbara också med setEditable(false)!
+
+        checkConnection();
 
         // Visar ett fönster med uppgifter om förbindelsen.
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -579,13 +556,7 @@ public class Graphics<T> extends Application {
     public void changeConnection() {
         Set<City> nodes = listGraph.getNodes(); // Hämtar alla noder
 
-        if (place1 == null || place2 == null) { // Om det inte finns två markerade platser i kartan visas felmeddelande
-            showError("Error: Select two cities.");
-            return;
-        } else if (!listGraph.pathExists(place1, place2)) { // Om det inte finns förbindelse mellan platserna visas felmeddelande
-            showError("Error: No connection between citites.");
-            return;
-        }
+        checkConnection();
 
         Edge edge = listGraph.getEdgeBetween(place1, place2);
 
@@ -620,6 +591,16 @@ public class Graphics<T> extends Application {
             listGraph.setConnectionWeight(place2, place2, Integer.parseInt(timeField.getText())); //Grafen är riktad så måste sätta vikten åt båda hållen
         } else if (result.isPresent() && result.get() == ButtonType.OK && timeField.getText().isEmpty()){
             showError("You have to write a new time!");
+        }
+    }
+
+    private void checkConnection(){
+        if (place1 == null || place2 == null) { // Om det inte finns två markerade platser i kartan visas felmeddelande
+            showError("Error: Select two cities.");
+            return;
+        } else if (!listGraph.pathExists(place1, place2)) { // Om det inte finns förbindelse mellan platserna visas felmeddelande
+            showError("Error: No connection between citites.");
+            return;
         }
     }
 
