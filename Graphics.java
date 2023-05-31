@@ -28,8 +28,7 @@ import javax.imageio.ImageIO;
 
 import javafx.scene.control.ButtonBar.ButtonData;
 
-
-public class Graphics <T> extends Application{
+public class Graphics<T> extends Application {
     private Rectangle mapBackground;
     private boolean imageLoaded = false;
     private ImageView imageView;
@@ -48,97 +47,103 @@ public class Graphics <T> extends Application{
     private List<CustomButton> buttons;
     private VBox root = new VBox();
 
-    public static void main(String[]args){
+    public static void main(String[] args) {
         launch(args);
     }
 
     @Override
     public void start(Stage primaryStage) {
-        //lista med underrubriker för "file" menyn
+        // lista med underrubriker för "file" menyn
         List<String> menuNamnen = List.of("New Map", "Open", "Save", "Save Image", "Exit");
         MenuBar menuBar = new MenuBar();
         VBox vBox = new VBox(menuBar);
 
-        Menu fileMenu = new Menu("File"); //Skapar & sätter Meny-texten till File
+        Menu fileMenu = new Menu("File"); // Skapar & sätter Meny-texten till File
 
-        //loopar igenom listan av menynamnen, skapar en menuitem för varje namn och lägger till eventhanterare via handlefilemenu + lägger till i filemenyn
-        for(String rubrikNamn : menuNamnen){
+        // loopar igenom listan av menynamnen, skapar en menuitem för varje namn och
+        // lägger till eventhanterare via handlefilemenu + lägger till i filemenyn
+        for (String rubrikNamn : menuNamnen) {
             MenuItem menuItem = new MenuItem(rubrikNamn);
             menuItem.setOnAction(this::handleFileMenu);
             fileMenu.getItems().add(menuItem);
         }
 
-        //lägger till filemenu tiill menubar
+        // lägger till filemenu tiill menubar
         menuBar.getMenus().add(fileMenu);
 
         FlowPane buttonPane = new FlowPane();
-        //sätter mellanrum/spacing mellan ui elementen (knapparna) både vertikalt och horisontellt
+        // sätter mellanrum/spacing mellan ui elementen (knapparna) både vertikalt och
+        // horisontellt
         buttonPane.setHgap(20);
         buttonPane.setVgap(20);
 
-        //här sätter jag den "önskade" bredden på flowpanen
+        // här sätter jag den "önskade" bredden på flowpanen
         buttonPane.setPrefWrapLength(800);
 
         vBox.getChildren().add(buttonPane);
 
-        //sätter bredd och höjd för stage
+        // sätter bredd och höjd för stage
         primaryStage.setWidth(635);
         primaryStage.setHeight(818);
 
-        //lista med meny knappar
+        // lista med meny knappar
         buttons = List.of(
                 new CustomButton("Find Path", 0, 0),
                 new CustomButton("Show Connection", 0, 0),
                 newPlaceButton = new CustomButton("New Place", 0, 0),
                 new CustomButton("New Connection", 0, 0),
-                new CustomButton("Change Connection", 0, 0)
-        );
+                new CustomButton("Change Connection", 0, 0));
 
-        buttonPane.getChildren().addAll(buttons); //lägger in knapparna i pane
+        buttonPane.getChildren().addAll(buttons); // lägger in knapparna i pane
 
-        //här adderar jag en eventhandlar till varje separat knapp som är tillagd i listan
-        /*for (CustomButton button : buttons) {
-            button.setOnAction(new EventHandler<ActionEvent>() { //Allt inom {} är den nya metoden EventHandler
-                @Override
-                public void handle(ActionEvent event) {
-                    handleButtons(event);
-                    //System.out.println("Knapp " + button.getText() + " har klickat på :)");
-                }
-            });
-        }*/
-        for(CustomButton button : buttons){
+        // här adderar jag en eventhandlar till varje separat knapp som är tillagd i
+        // listan
+        /*
+         * for (CustomButton button : buttons) {
+         * button.setOnAction(new EventHandler<ActionEvent>() { //Allt inom {} är den
+         * nya metoden EventHandler
+         * 
+         * @Override
+         * public void handle(ActionEvent event) {
+         * handleButtons(event);
+         * //System.out.println("Knapp " + button.getText() + " har klickat på :)");
+         * }
+         * });
+         * }
+         */
+        for (CustomButton button : buttons) {
             button.setOnAction(this::handleButtons);
             button.setDisable(true);
         }
 
-        //skapar en egen pane för själva bilden så att den inte lagras på knapparna
+        // skapar en egen pane för själva bilden så att den inte lagras på knapparna
         imagePane = new Pane();
         imageView = new ImageView();
         imagePane.getChildren().add(imageView);
 
         root.getChildren().addAll(vBox, buttonPane, imagePane);
 
-        //här skapas en scene med vbox som root och måtten/storleken
+        // här skapas en scene med vbox som root och måtten/storleken
         scene = new Scene(root, 960, 600);
         primaryStage.setScene(scene);
         primaryStage.show();
         primaryStage.setTitle("PathFinder");
 
-        //primaryStage.setOnCloseRequest(new ExitHandler());
+        // primaryStage.setOnCloseRequest(new ExitHandler());
         primaryStage.setOnCloseRequest(event -> exit(event));
     }
 
-    public void handleFileMenu(ActionEvent event){
+    public void handleFileMenu(ActionEvent event) {
         MenuItem menuItem = (MenuItem) event.getSource();
         String menuNamn = menuItem.getText();
 
-        switch(menuNamn){
+        switch (menuNamn) {
             case "New Map":
                 if (!imageLoaded) {
                     Image image = new Image(imageUrl);
                     imageView.setImage(image);
                     imageLoaded = true;
-                    for(CustomButton b : buttons){
+                    for (CustomButton b : buttons) {
                         b.setDisable(false);
                     }
                     hasSaved = false;
@@ -167,16 +172,16 @@ public class Graphics <T> extends Application{
         }
     }
 
-    public void handleButtons (ActionEvent event){
+    public void handleButtons(ActionEvent event) {
         CustomButton button = (CustomButton) event.getSource();
         String name = button.getText();
 
-        switch (name){
+        switch (name) {
             case "Find Path":
                 System.out.println("Find Path clicked");
                 break;
             case "Show Connection":
-                //showConnection();
+                showConnection();
                 System.out.println("Show Connection print");
                 break;
             case "New Place":
@@ -188,31 +193,32 @@ public class Graphics <T> extends Application{
                 System.out.println("New Connection print");
                 break;
             case "Change Connection":
+                changeConnection();
                 System.out.println("Change Connection clicked");
                 break;
         }
     }
 
-    //    private void saveExpriement(String url, Graph<T> graph){
-//        try {
-//            String filePath = "europa.graph";
-//            FileWriter fileWriter = new FileWriter(filePath);
-//            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-//
-//            //skriv url till bild filen
-//            bufferedWriter.write(url);
-//            bufferedWriter.newLine();
-//
-//            //skriva ut noderna
-//            for(T t : graph.getNodes()){
-//                bufferedWriter.write(t.getName)
-//            }
-//        } catch (Exception e) {
-//            // TODO: handle exception
-//        }
-//    }
+    // private void saveExpriement(String url, Graph<T> graph){
+    // try {
+    // String filePath = "europa.graph";
+    // FileWriter fileWriter = new FileWriter(filePath);
+    // BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+    //
+    // //skriv url till bild filen
+    // bufferedWriter.write(url);
+    // bufferedWriter.newLine();
+    //
+    // //skriva ut noderna
+    // for(T t : graph.getNodes()){
+    // bufferedWriter.write(t.getName)
+    // }
+    // } catch (Exception e) {
+    // // TODO: handle exception
+    // }
+    // }
 
-    private void save(){
+    private void save() {
         try {
             String filePath = "europa.graph"; //Referens till filen vi ska skriva till
             PrintWriter writer = new PrintWriter(new FileWriter(filePath)); //Skapar ny med filePath
@@ -235,107 +241,116 @@ public class Graphics <T> extends Application{
 
             writer.close();
             hasSaved = true;
-        } catch (IOException e){
+        } catch (IOException e) {
             throw new RuntimeException("Error: No such file found.");
         }
     }
 
-    private void open(){ //Övningsuppgift 4 använder en map för att konvertera String till Node, kanske behövs???
+    private void open() { // Övningsuppgift 4 använder en map för att konvertera String till Node, kanske
+                          // behövs???
         if (hasSaved == false) {
             // Visa dialogruta för att fråga användaren om personen vill spara ändringarna
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Warning");
             alert.setHeaderText("Unsaved changes, continue anyways?");
 
-            //gör knapparna till dialog fönstret, ButtonType är typen av knappar som finns i ett alert dialogfönster, trodde det funka med vanliga knappar först men tydligen inte, detta är en subtyp till button
-            //ButtonType saveButton = new ButtonType("Spara"); //denna behövs icke
+            // gör knapparna till dialog fönstret, ButtonType är typen av knappar som finns
+            // i ett alert dialogfönster, trodde det funka med vanliga knappar först men
+            // tydligen inte, detta är en subtyp till button
+            // ButtonType saveButton = new ButtonType("Spara"); //denna behövs icke
             ButtonType okButton = new ButtonType("OK");
             ButtonType cancelButton = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
 
-            alert.getButtonTypes().setAll(okButton, cancelButton); //sätter alla knappar i dialogfönstret //tog bort saveButton härifrån
+            alert.getButtonTypes().setAll(okButton, cancelButton); // sätter alla knappar i dialogfönstret //tog bort
+                                                                   // saveButton härifrån
 
-            Optional<ButtonType> result = alert.showAndWait(); //väntar med att sätta knapp typen tills användaren trycker på någon, rätt häftigt ändå
+            Optional<ButtonType> result = alert.showAndWait(); // väntar med att sätta knapp typen tills användaren
+                                                               // trycker på någon, rätt häftigt ändå
 
-            switch(result.get().getText()){
-                //spara de osparade ändringarna
+            switch (result.get().getText()) {
+                // spara de osparade ändringarna
                 case "Spara":
                     save();
                     break;
                 case "OK":
-                    //förkasta de osparade ändringarna och det nya "dokumentet" öppnas
+                    // förkasta de osparade ändringarna och det nya "dokumentet" öppnas
                 default:
-                    //avbryt
+                    // avbryt
                     return;
             }
         }
 
-        if (!hasSaved){ //Om användaren inte har sparad info så skicka felmeddelande
+        if (!hasSaved) { // Om användaren inte har sparad info så skicka felmeddelande
             showError("No saved information!");
-        } else { //Annars öppna europa.graph
+        } else { // Annars öppna europa.graph
             try {
-                FileReader file = new FileReader("europa.graph"); //Referens till filen
-                BufferedReader reader = new BufferedReader(file); //Läser in filen rad för rad
+                FileReader file = new FileReader("europa.graph"); // Referens till filen
+                BufferedReader reader = new BufferedReader(file); // Läser in filen rad för rad
 
-                //Återskapar objekt från filen:
-                String line; //Tom sträng
-                reader.readLine(); //läser första raden file:europa.gif
-                reader.readLine(); //Läser andra raden med uppradningen av alla städer
-                //Alla rader efter detta ser ut ex: Stockholm;Oslo;Train;3
-                while ((line = reader.readLine()) != null){ //läser en rad i taget genom hela filen tills den tar slut
-                    String[] parts = line.split(";"); //Delar upp noderna genom ;
-                    T cityStart = (T) parts[0]; //Omvandlar String till T
+                // Återskapar objekt från filen:
+                String line; // Tom sträng
+                reader.readLine(); // läser första raden file:europa.gif
+                reader.readLine(); // Läser andra raden med uppradningen av alla städer
+                // Alla rader efter detta ser ut ex: Stockholm;Oslo;Train;3
+                while ((line = reader.readLine()) != null) { // läser en rad i taget genom hela filen tills den tar slut
+                    String[] parts = line.split(";"); // Delar upp noderna genom ;
+                    T cityStart = (T) parts[0]; // Omvandlar String till T
                     T cityEnd = (T) parts[1];
                     String tag = parts[2];
-                    int weight = Integer.parseInt(parts[3]); //Omvandlar vikten från string till int
+                    int weight = Integer.parseInt(parts[3]); // Omvandlar vikten från string till int
 
-                    //Lägger till noderna i grafen
+                    // Lägger till noderna i grafen
                     listGraph.add(cityStart);
                     listGraph.add(cityEnd);
 
-                    //Skapar en koppling mellan dem
+                    // Skapar en koppling mellan dem
                     listGraph.connect(cityStart, cityEnd, tag, weight);
                 }
                 file.close();
                 reader.close();
-            } catch (IOException e){
+            } catch (IOException e) {
                 throw new RuntimeException("Error: No such file found.");
             }
         }
     }
 
-    public void saveImage(){
-        try{
-            WritableImage image = scene.snapshot(null); //skapar bild av scenen - snapshot kan bara vara WritableImage (som är en bildtyp för att representera bilder i minnet)
-            BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null); //bilden omvandlas till bufferedimage via swingFXUtils, vilket krävs pga imageio kan bara hantera bufferedimages
-            ImageIO.write(bufferedImage, "png", new File("capture.png")); //imageIO kan spara bilder i olika format
-        } catch (IOException e){
+    public void saveImage() {
+        try {
+            WritableImage image = scene.snapshot(null); // skapar bild av scenen - snapshot kan bara vara WritableImage
+                                                        // (som är en bildtyp för att representera bilder i minnet)
+            BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null); // bilden omvandlas till bufferedimage
+                                                                                 // via swingFXUtils, vilket krävs pga
+                                                                                 // imageio kan bara hantera
+                                                                                 // bufferedimages
+            ImageIO.write(bufferedImage, "png", new File("capture.png")); // imageIO kan spara bilder i olika format
+        } catch (IOException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR, "IO-error " + e.getMessage());
             alert.showAndWait();
         }
     }
 
-    public void exit(WindowEvent event){
-        if(hasSaved){
-            //Stage stageToClose = (Stage) scene.getWindow();
-            //stageToClose.close();
+    public void exit(WindowEvent event) {
+        if (hasSaved) {
+            // Stage stageToClose = (Stage) scene.getWindow();
+            // stageToClose.close();
             System.exit(0);
         } else {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setHeaderText("Warning");
             alert.setContentText("Unsaved changes, exit anyway?");
             Optional<ButtonType> result = alert.showAndWait();
-            if(result.isPresent() && result.get().equals(ButtonType.CANCEL)){
-                event.consume(); //"konsumerar" aka avbryter eventet, så stängningen kommer ej ske
-            } else if(result.isPresent() && result.get().equals(ButtonType.OK)){
+            if (result.isPresent() && result.get().equals(ButtonType.CANCEL)) {
+                event.consume(); // "konsumerar" aka avbryter eventet, så stängningen kommer ej ske
+            } else if (result.isPresent() && result.get().equals(ButtonType.OK)) {
                 Stage stageToClose = (Stage) scene.getWindow();
                 stageToClose.close();
             }
         }
     }
 
-    class NewPlaceHandler implements EventHandler<ActionEvent>{
+    class NewPlaceHandler implements EventHandler<ActionEvent> {
         @Override
-        public void handle(ActionEvent event){
+        public void handle(ActionEvent event) {
 
             newPlaceButton.setDisable(true);
             imagePane.setCursor(Cursor.CROSSHAIR);
@@ -344,9 +359,9 @@ public class Graphics <T> extends Application{
         }
     }
 
-    class MapClickHandler implements EventHandler<MouseEvent>{
+    class MapClickHandler implements EventHandler<MouseEvent> {
         @Override
-        public void handle(MouseEvent event){
+        public void handle(MouseEvent event) {
             double x = event.getX();
             double y = event.getY();
 
@@ -356,16 +371,17 @@ public class Graphics <T> extends Application{
             newPlaceName.setContentText("Name of new place:");
             var result = newPlaceName.showAndWait();
 
-            if(result.isPresent()){
+            if (result.isPresent()) {
                 String name = newPlaceName.getEditor().getText();
                 City newPlace = new City(name, x, y);
 
-                //addera nya platsen till grafen
+                // addera nya platsen till grafen
                 placesList.add(newPlace);
                 imagePane.getChildren().add(newPlace);
                 newPlace.setId(name);
 
-                //Av linn: innan lades den bara till i linus arraylist, inte i nodes grafen i listgraph som våra listgraph metoder använder
+                // Av linn: innan lades den bara till i linus arraylist, inte i nodes grafen i
+                // listgraph som våra listgraph metoder använder
                 listGraph.add(newPlace);
 
                 Label labelNewPlace = new Label(name);
@@ -375,12 +391,12 @@ public class Graphics <T> extends Application{
                 labelNewPlace.setLayoutY(y + 8);
                 imagePane.getChildren().add(labelNewPlace);
 
-                //nu vet vi att användaren har lagt till en plats, så saved är false
+                // nu vet vi att användaren har lagt till en plats, så saved är false
                 hasSaved = false;
 
                 labelNewPlace.setDisable(true);
                 newPlace.setOnMouseClicked(new PlaceClickHandler());
-                
+
             }
 
             newPlaceButton.setDisable(false);
@@ -389,23 +405,23 @@ public class Graphics <T> extends Application{
         }
     }
 
-    class PlaceClickHandler implements EventHandler<MouseEvent>{
+    class PlaceClickHandler implements EventHandler<MouseEvent> {
         @Override
         public void handle(MouseEvent event){
             City place = (City) event.getSource();
 
-            if(place.isSelected()){
-                place.setSelected(false); //ifall den redan är selected blir den unselected (blå) av detta klick
-                if(place == place1){
-                    place1 = null; //gör att man inte kan skapa ny place på detta ställe
-                }else{
+            if (place.isSelected()) {
+                place.setSelected(false); // ifall den redan är selected blir den unselected (blå) av detta klick
+                if (place == place1) {
+                    place1 = null; // gör att man inte kan skapa ny place på detta ställe
+                } else {
                     place2 = null;
                 }
-            }else{ //ifall den inte är selected
-                if(place1 == null){
+            } else { // ifall den inte är selected
+                if (place1 == null) {
                     place1 = place;
                     place.setSelected(true);
-                }else if(place2 == null){
+                } else if (place2 == null) {
                     place2 = place;
                     place.setSelected(true);
                 }
@@ -413,14 +429,14 @@ public class Graphics <T> extends Application{
         }
     }
 
-    class FindPathHandler implements EventHandler<ActionEvent>{
+    class FindPathHandler implements EventHandler<ActionEvent> {
 
         @Override
-        public void handle(ActionEvent event){
+        public void handle(ActionEvent event) {
 
-            if(place1 == null || place2 == null){
+            if (place1 == null || place2 == null) {
                 showError("Two places must be selected!");
-            }else if(!listGraph.pathExists(place1, place2)){
+            } else if (!listGraph.pathExists(place1, place2)) {
                 showError("There is no path between these two places!");
             }
             else{
@@ -449,26 +465,27 @@ public class Graphics <T> extends Application{
         }
     }
 
-    public void newConnection(){
-        //ifall användaren ej valt två platser
-        if(place1 == null || place2 == null){
+    public void newConnection() {
+        // ifall användaren ej valt två platser
+        if (place1 == null || place2 == null) {
             showError("Two places must be connected!");
             return;
         }
 
-        //ifall connection redan finns mellan de valda platserna
-        if(listGraph.pathExists(place1, place2)){
+        // ifall connection redan finns mellan de valda platserna
+        if (listGraph.pathExists(place1, place2)) {
             showError("Connection already exists!");
             return;
         }
 
-        //skapar dialogrutan
+        // skapar dialogrutan
         Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
-        HBox hBox1 = new HBox(6); //skapar två hboxar (två "rader"), med padding mellan dess children (komponenter)
+        HBox hBox1 = new HBox(6); // skapar två hboxar (två "rader"), med padding mellan dess children
+                                  // (komponenter)
         HBox hBox2 = new HBox(12);
         VBox vBox = new VBox(5);
-        vBox.getChildren().addAll(hBox1, hBox2); //skapar vbox som lägger hboxarna efter varandra vertikalt
-        confirmation.getDialogPane().setContent(vBox); //lägger till vboxen i alert
+        vBox.getChildren().addAll(hBox1, hBox2); // skapar vbox som lägger hboxarna efter varandra vertikalt
+        confirmation.getDialogPane().setContent(vBox); // lägger till vboxen i alert
 
         confirmation.setHeaderText("Connection from " + place1.getName() + " till " + place2.getName());
 
@@ -482,23 +499,23 @@ public class Graphics <T> extends Application{
 
         Optional<ButtonType> result = confirmation.showAndWait();
 
-        //hantera användarens input på dialogrutan
-        if(result.isPresent() && result.get().equals(ButtonType.CANCEL)){
+        // hantera användarens input på dialogrutan
+        if (result.isPresent() && result.get().equals(ButtonType.CANCEL)) {
             return;
-        } else if(result.isPresent() && result.get().equals(ButtonType.OK)){
+        } else if (result.isPresent() && result.get().equals(ButtonType.OK)) {
             String name = nameField.getText();
             String time = timeField.getText();
-            if(name.isBlank() || name.isEmpty()){
+            if (name.isBlank() || name.isEmpty()) {
                 showError("Name cannot be empty!");
                 return;
-            } else if(!time.matches("\\d+")){ //ifall strängen inte bara innehåller siffror
+            } else if (!time.matches("\\d+")) { // ifall strängen inte bara innehåller siffror
                 showError("Time must be in numbers!");
                 return;
-            } else{
-                //lägger till förbindelsen i städernas sets via connect-metoden
+            } else {
+                // lägger till förbindelsen i städernas sets via connect-metoden
                 listGraph.connect(place1, place2, name, Integer.valueOf(time));
 
-                //skapar den grafiska förbindelsen (linjen)
+                // skapar den grafiska förbindelsen (linjen)
                 Line connectionLine = new Line(place1.getX(), place1.getY(), place2.getX(), place2.getY());
                 connectionLine.setStroke(Color.BLACK);
                 connectionLine.setStrokeWidth(3.0);
@@ -506,59 +523,106 @@ public class Graphics <T> extends Application{
             }
         }
     }
-    
-//    public void showConnection(){
-//        Set<City> nodes = listGraph.getNodes(); //Hämtar alla noder
-//        City cityStart = new City("temp1"); //Kanske ska flyttas ut till instansvariabel?
-//        City cityEnd = new City("temp2"); //Måste ändra sen så att man hämtar de faktiskta noderna?
-//
-//        if (cityStart == null || cityEnd == null){   //Om det inte finns två markerade platser i kartan visas felmeddelande
-//            showError("Error: Select two cities.");
-//            return;
-//        } else if (listGraph.getEdgeBetween(cityStart, cityEnd) == null){ //Om det inte finns förbindelse mellan platserna visas felmeddelande
-//            showError("Error: No connection between citites.");
-//            return;
-//        }
-    //kommentar från linn så hon inte glömmer hennes spånande:
-    //ska man kanske kolla först om place1 och place2 (de två nedtryckta platserna (se placeClickHandler)) är null och ifall ja visa alert (på samma sätt som jag gjort i new conenction)
-    //och sen kolla via pathexists ifall förbindelsen finns - ifall nej visa alert
-    //och seeen använda getedgebetween plats1 och plats2 för att få förbindelsen
-    //och sedan sätta textfälten i alerterna med infon om förbindelsen till oredigerbara också med setEditable(false)!
-//
-//        //Visar ett fönster med uppgifter om förbindelsen.
-//        Alert alert = new Alert (Alert.AlertType.CONFIRMATION);
-//        alert.setTitle("Connection");
-//        alert.setHeaderText("Connection from blablabla to buuu");
-//
-//        //Gör första HBox:en
-//        Label name = new Label("Name: ");
-//        TextField nameField = new TextField();
-//        HBox hboxOne = new HBox(8); //sätter padding horisontellt
-//        hboxOne.getChildren().addAll(name, nameField);
-//
-//        //Gör andra HBox:en
-//        Label time = new Label("Time: ");
-//        TextField timeField = new TextField();
-//        HBox hboxTwo = new HBox(13);
-//        hboxTwo.getChildren().addAll(time, timeField);
-//
-//        //Lägg till de i en VBox
-//        VBox vbox = new VBox(10);
-//        vbox.getChildren().addAll(hboxOne, hboxTwo);
-//        vbox.setAlignment(Pos.CENTER);
-//
-//        //placerar de i mitten av en BorderPane
-//        // BorderPane borderPane = new BorderPane();
-//        // borderPane.setCenter(vbox);
-//        // borderPane.setAlignment(vbox, Pos.CENTER);
-//
-//        alert.getDialogPane().setContent(vbox);
-//        alert.showAndWait();
-//    }
+
+    public void showConnection() {
+        Set<City> nodes = listGraph.getNodes(); // Hämtar alla noder
+
+        if (place1 == null || place2 == null) { // Om det inte finns två markerade platser i kartan visas felmeddelande
+            showError("Error: Select two cities.");
+            return;
+        } else if (!listGraph.pathExists(place1, place2)) { // Om det inte finns förbindelse mellan platserna visas
+                                                            // felmeddelande
+            showError("Error: No connection between citites.");
+            return;
+        }
+
+        Edge edge = listGraph.getEdgeBetween(place1, place2);
+        // kommentar från linn så hon inte glömmer hennes spånande:
+        // ska man kanske kolla först om place1 och place2 (de två nedtryckta platserna
+        // (se placeClickHandler)) är null och ifall ja visa alert (på samma sätt som
+        // jag gjort i new conenction)
+        // och sen kolla via pathexists ifall förbindelsen finns - ifall nej visa alert
+        // och seeen använda getedgebetween plats1 och plats2 för att få förbindelsen
+        // och sedan sätta textfälten i alerterna med infon om förbindelsen till
+        // oredigerbara också med setEditable(false)!
+
+        // Visar ett fönster med uppgifter om förbindelsen.
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Connection");
+        alert.setHeaderText("Connection from " + place1.getName() + " to " + place2.getName());
+
+        // Gör första HBox:en
+        Label name = new Label("Name: ");
+        TextField nameField = new TextField(edge.getName());
+        nameField.setEditable(false);
+        HBox hboxOne = new HBox(8); // sätter padding horisontellt
+        hboxOne.getChildren().addAll(name, nameField);
+
+        // Gör andra HBox:en
+        Label time = new Label("Time: ");
+        TextField timeField = new TextField(Integer.toString(edge.getWeight()));
+        timeField.setEditable(false);
+        HBox hboxTwo = new HBox(13);
+        hboxTwo.getChildren().addAll(time, timeField);
+
+        // Lägg till de i en VBox
+        VBox vbox = new VBox(10);
+        vbox.getChildren().addAll(hboxOne, hboxTwo);
+        vbox.setAlignment(Pos.CENTER);
+
+        alert.getDialogPane().setContent(vbox);
+        alert.showAndWait();
+    }
 
 
+    public void changeConnection() {
+        Set<City> nodes = listGraph.getNodes(); // Hämtar alla noder
 
-    private void showError(String errorMessage){
+        if (place1 == null || place2 == null) { // Om det inte finns två markerade platser i kartan visas felmeddelande
+            showError("Error: Select two cities.");
+            return;
+        } else if (!listGraph.pathExists(place1, place2)) { // Om det inte finns förbindelse mellan platserna visas felmeddelande
+            showError("Error: No connection between citites.");
+            return;
+        }
+
+        Edge edge = listGraph.getEdgeBetween(place1, place2);
+
+        // Visar ett fönster med uppgifter om förbindelsen.
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Connection");
+        alert.setHeaderText("Connection from " + place1.getName() + " to " + place2.getName());
+
+        // Gör första HBox:en
+        Label name = new Label("Name: ");
+        TextField nameField = new TextField(edge.getName());
+        nameField.setEditable(false);
+        HBox hboxOne = new HBox(8); // sätter padding horisontellt
+        hboxOne.getChildren().addAll(name, nameField);
+
+        // Gör andra HBox:en
+        Label time = new Label("Time: ");
+        TextField timeField = new TextField();
+        HBox hboxTwo = new HBox(13);
+        hboxTwo.getChildren().addAll(time, timeField);
+
+        // Lägg till de i en VBox
+        VBox vbox = new VBox(10);
+        vbox.getChildren().addAll(hboxOne, hboxTwo);
+        vbox.setAlignment(Pos.CENTER);
+
+        alert.getDialogPane().setContent(vbox);
+        Optional<ButtonType> result = alert.showAndWait();
+
+        if (result.isPresent() && result.get() == ButtonType.OK && !timeField.getText().isEmpty()) { //Om användaren klickat på OK och skrivit in ny tid
+            listGraph.setConnectionWeight(place1, place2, Integer.parseInt(timeField.getText()));
+            listGraph.setConnectionWeight(place2, place2, Integer.parseInt(timeField.getText())); //Grafen är riktad så måste sätta vikten åt båda hållen
+        } else if (result.isPresent() && result.get() == ButtonType.OK && timeField.getText().isEmpty()){
+            showError("You have to write a new time!");
+        }
+    }
+
+    private void showError(String errorMessage) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Error");
         alert.setHeaderText(null);
