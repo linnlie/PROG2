@@ -515,10 +515,9 @@ public class Graphics<T> extends Application {
                 listGraph.connect(place1, place2, name, Integer.valueOf(time));
 
                 // skapar den grafiska förbindelsen (linjen)
-                Line connectionLine = new Line(place1.getX(), place1.getY(), place2.getX(), place2.getY());
-                connectionLine.setStroke(Color.BLACK);
-                connectionLine.setStrokeWidth(3.0);
-                imagePane.getChildren().add(connectionLine);
+                createLine(place1, place2);
+
+                hasSaved = false;
             }
         }
     }
@@ -615,5 +614,12 @@ public class Graphics<T> extends Application {
         alert.setHeaderText(null);
         alert.setContentText(errorMessage);
         alert.showAndWait();
+    }
+
+    private void createLine(City a, City b){
+        Line connectionLine = new Line(a.getX(), a.getY(), b.getX(), b.getY());
+        connectionLine.setStroke(Color.BLACK);
+        connectionLine.setStrokeWidth(3.0);
+        imagePane.getChildren().add(connectionLine);
     }
 }
