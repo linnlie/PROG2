@@ -228,16 +228,20 @@ public class Graphics<T> extends Application {
 
             Set<City> nodeSet = listGraph.getNodes(); ///Hämtar alla noder
             for (City node : nodeSet){ //Går igenom varje nod i nod-Settet
-                Collection <Edge<T>> edges = new HashSet<>();
-                //edges.add(listGraph.getEdgesFrom(node));
                 sb.append(node.getName()).append(";").append(node.getX()).append(";").append(node.getY());
             }
             writer.println(sb.toString()); //Skriver ut stringBuildern i filen
 
             // //Hittar och skriver ut förbindelserna
 
-            for (City node : nodeSet){
-            //Loopa igenom varje edge, skriv ut från-noden, till-noden, namnet å vikten
+            for (City node : nodeSet){ //Går igenom varje stad.    Ex: Stockholm, London, Oslo
+                for (Object obj : listGraph.getEdgesFrom(node)){ //Går igenom alla dess kanter 
+                    Edge edge = (Edge) obj;
+                    City destination = (City) edge.getDestination();
+                    int weight = edge.getWeight();
+                    String edgeName = edge.getName();
+                    writer.println(node.getName() + ";" + destination.getName() + ";" + edgeName + ";" + weight);
+                }
             }
 
             writer.close();
@@ -246,6 +250,7 @@ public class Graphics<T> extends Application {
             throw new RuntimeException("Error: No such file found.");
         }
     }
+
 
     private void open() { // Övningsuppgift 4 använder en map för att konvertera String till Node, kanske behövs???
         if (hasSaved == false) {
