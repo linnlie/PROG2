@@ -1,6 +1,4 @@
 file:europa.gif
-Stockholm;471.0;241.5Tjohej;354.0;466.5Bajs;245.0;360.5
-Stockholm;Tjohej;Truck;3
-Tjohej;Stockholm;Truck;3
-Tjohej;Bajs;Dumbo;7
-Bajs;Tjohej;Dumbo;7
+London;246.0;360.5;Stockholm;470.0;241.5;
+London;Stockholm;Train;5
+Stockholm;London;Train;5

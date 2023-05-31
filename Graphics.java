@@ -73,8 +73,7 @@ public class Graphics<T> extends Application {
         menuBar.getMenus().add(fileMenu);
 
         FlowPane buttonPane = new FlowPane();
-        // sätter mellanrum/spacing mellan ui elementen (knapparna) både vertikalt och
-        // horisontellt
+        // sätter mellanrum/spacing mellan ui elementen (knapparna) både vertikalt och horisontellt
         buttonPane.setHgap(20);
         buttonPane.setVgap(20);
 
@@ -89,11 +88,11 @@ public class Graphics<T> extends Application {
 
         // lista med meny knappar
         buttons = List.of(
-                new CustomButton("Find Path", 0, 0),
-                new CustomButton("Show Connection", 0, 0),
-                newPlaceButton = new CustomButton("New Place", 0, 0),
-                new CustomButton("New Connection", 0, 0),
-                new CustomButton("Change Connection", 0, 0));
+            new CustomButton("Find Path", 0, 0),
+            new CustomButton("Show Connection", 0, 0),
+            newPlaceButton = new CustomButton("New Place", 0, 0),
+            new CustomButton("New Connection", 0, 0),
+            new CustomButton("Change Connection", 0, 0));
 
         buttonPane.getChildren().addAll(buttons); // lägger in knapparna i pane
 
@@ -134,7 +133,7 @@ public class Graphics<T> extends Application {
         primaryStage.setOnCloseRequest(event -> exit(event));
     }
 
-    public void handleFileMenu(ActionEvent event) {
+    private void handleFileMenu(ActionEvent event) {
         MenuItem menuItem = (MenuItem) event.getSource();
         String menuNamn = menuItem.getText();
 
@@ -173,7 +172,8 @@ public class Graphics<T> extends Application {
         }
     }
 
-    public void handleButtons(ActionEvent event) {
+
+    private void handleButtons(ActionEvent event) {
         CustomButton button = (CustomButton) event.getSource();
         String name = button.getText();
 
@@ -200,24 +200,6 @@ public class Graphics<T> extends Application {
         }
     }
 
-    // private void saveExpriement(String url, Graph<T> graph){
-    // try {
-    // String filePath = "europa.graph";
-    // FileWriter fileWriter = new FileWriter(filePath);
-    // BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-    //
-    // //skriv url till bild filen
-    // bufferedWriter.write(url);
-    // bufferedWriter.newLine();
-    //
-    // //skriva ut noderna
-    // for(T t : graph.getNodes()){
-    // bufferedWriter.write(t.getName)
-    // }
-    // } catch (Exception e) {
-    // // TODO: handle exception
-    // }
-    // }
 
     private void save() {
         try {
@@ -228,11 +210,9 @@ public class Graphics<T> extends Application {
 
             Set<City> nodeSet = listGraph.getNodes(); /// Hämtar alla noder
             for (City node : nodeSet) { // Går igenom varje nod i nod-Settet
-                sb.append(node.getName()).append(";").append(node.getX()).append(";").append(node.getY());
+                sb.append(node.getName()).append(";").append(node.getX()).append(";").append(node.getY()).append(";");
             }
             writer.println(sb.toString()); // Skriver ut stringBuildern i filen
-
-            // //Hittar och skriver ut förbindelserna
 
             for (City node : nodeSet) { // Går igenom varje stad. Ex: Stockholm, London, Oslo
                 for (Object obj : listGraph.getEdgesFrom(node)) { // Går igenom alla dess kanter
@@ -251,61 +231,47 @@ public class Graphics<T> extends Application {
         }
     }
 
-    private void open() { // Övningsuppgift 4 använder en map för att konvertera String till Node, kanske
-                          // behövs???
-        if (hasSaved == false) {
-            // Visa dialogruta för att fråga användaren om personen vill spara ändringarna
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("Warning");
-            alert.setHeaderText("Unsaved changes, continue anyways?");
 
-            // gör knapparna till dialog fönstret, ButtonType är typen av knappar som finns
-            // i ett alert dialogfönster, trodde det funka med vanliga knappar först men
-            // tydligen inte, detta är en subtyp till button
-            // ButtonType saveButton = new ButtonType("Spara"); //denna behövs icke
-            ButtonType okButton = new ButtonType("OK");
-            ButtonType cancelButton = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
+    private void open() { // Övningsuppgift 4 använder en map för att konvertera String till Node, kanske behövs???
+        checkUnsavedChanges();
 
-            alert.getButtonTypes().setAll(okButton, cancelButton); // sätter alla knappar i dialogfönstret tog bort
-                                                                   // saveButton härifrån
-
-            Optional<ButtonType> result = alert.showAndWait(); // väntar med att sätta knapp typen tills användare
-                                                               // trycker på någon, rätt häftigt ändå
-
-            switch (result.get().getText()) {
-                // spara de osparade ändringarna
-                case "Spara":
-                    save();
-                    break;
-                case "OK":
-                    // förkasta de osparade ändringarna och det nya "dokumentet" öppnas
-                default:
-                    // avbryt
-                    return;
-            }
-        }
-
-        try {
+        try { //Återskapa objekt från sparade filen europa.graph
+            Map<String, City> map = new HashMap<>(); //Namnet på staden är nyckeln
             FileReader file = new FileReader("europa.graph"); // Referens till filen
             BufferedReader reader = new BufferedReader(file); // Läser in filen rad för rad
 
-            // Återskapar objekt från filen:
-            String line; // Tom sträng
-            reader.readLine(); // läser första raden file:europa.gif
-            reader.readLine(); // Läser andra raden med uppradningen av alla städer
+            String line = reader.readLine(); // läser första raden file:europa.gif
+            String[] fileParts = line.split(":");
+            String url = fileParts[1];
+            Image image = new Image(url);
+            imageView.setImage(image);
+            imageLoaded = true;
+
+            line = reader.readLine();// Läser andra raden med uppradningen av alla städer
+            String[] subParts = line.split(";"); //Formatet på meningen: cityAName, x1, y1; cityBName, x2, y2
+            for (int i = 0; i < subParts.length; i += 3){
+                String cityName = subParts[i];
+                double x = Double.parseDouble(subParts[i+1]);
+                double y = Double.parseDouble(subParts[i+2]);
+
+                City city = new City(cityName, x ,y);
+                listGraph.add(city);
+                map.put(cityName, city);
+                System.out.println(city);
+            }
+    
             // Alla rader efter detta ser ut ex: Stockholm;Oslo;Train;3
             while ((line = reader.readLine()) != null) { // läser en rad i taget genom hela filen tills den tar slut
                 String[] parts = line.split(";"); // Delar upp noderna genom ;
-                T cityStart = (T) parts[0]; // Omvandlar String till T
-                T cityEnd = (T) parts[1];
+                String cityStartName = parts[0]; // Omvandlar String till T
+                String cityEndName = parts[1];
                 String tag = parts[2];
                 int weight = Integer.parseInt(parts[3]); // Omvandlar vikten från string till int
 
-                // Lägger till noderna i grafen
-                listGraph.add(cityStart);
-                listGraph.add(cityEnd);
+                City cityStart = map.get(cityStartName);
+                City cityEnd = map.get(cityEndName);
 
-                // Gör allt det grafiska:
+                createLine(cityStart, cityEnd);
             }
             file.close();
             reader.close();
@@ -314,20 +280,20 @@ public class Graphics<T> extends Application {
         }
     }
 
+
     public void saveImage() {
         try {
-            WritableImage image = scene.snapshot(null); // skapar bild av scenen - snapshot kan bara vara WritableImage
-                                                        // (som är en bildtyp för att representera bilder i minnet)
-            BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null); // bilden omvandlas till bufferedimage
-                                                                                 // via swingFXUtils, vilket krävs pga
-                                                                                 // imageio kan bara hantera
-                                                                                 // bufferedimages
+            // skapar bild av scenen - snapshot kan bara vara WritableImage (som är en bildtyp för att representera bilder i minnet)
+            WritableImage image = scene.snapshot(null); 
+            // bilden omvandlas till bufferedimage via swingFXUtils, vilket krävs pga imageio kan bara hantera bufferedimages
+            BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null); 
             ImageIO.write(bufferedImage, "png", new File("capture.png")); // imageIO kan spara bilder i olika format
         } catch (IOException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR, "IO-error " + e.getMessage());
             alert.showAndWait();
         }
     }
+
 
     public void exit(WindowEvent event) {
         if (hasSaved) {
@@ -348,6 +314,7 @@ public class Graphics<T> extends Application {
         }
     }
 
+
     class NewPlaceHandler implements EventHandler<ActionEvent> {
         @Override
         public void handle(ActionEvent event) {
@@ -356,6 +323,7 @@ public class Graphics<T> extends Application {
             imagePane.setOnMouseClicked(new MapClickHandler());
         }
     }
+
 
     class MapClickHandler implements EventHandler<MouseEvent> {
         @Override
@@ -403,6 +371,7 @@ public class Graphics<T> extends Application {
         }
     }
 
+
     class PlaceClickHandler implements EventHandler<MouseEvent> {
         @Override
         public void handle(MouseEvent event) {
@@ -427,8 +396,8 @@ public class Graphics<T> extends Application {
         }
     }
 
-    class FindPathHandler implements EventHandler<ActionEvent> {
 
+    class FindPathHandler implements EventHandler<ActionEvent> {
         @Override
         public void handle(ActionEvent event) {
 
@@ -462,6 +431,7 @@ public class Graphics<T> extends Application {
         }
     }
 
+
     public void newConnection() {
         // ifall användaren ej valt två platser
         if (place1 == null || place2 == null) {
@@ -477,8 +447,7 @@ public class Graphics<T> extends Application {
 
         // skapar dialogrutan
         Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
-        HBox hBox1 = new HBox(6); // skapar två hboxar (två "rader"), med padding mellan dess children
-                                  // (komponenter)
+        HBox hBox1 = new HBox(6); // skapar två hboxar (två "rader"), med padding mellan dess children (komponenter)
         HBox hBox2 = new HBox(12);
         VBox vBox = new VBox(5);
         vBox.getChildren().addAll(hBox1, hBox2); // skapar vbox som lägger hboxarna efter varandra vertikalt
@@ -520,6 +489,7 @@ public class Graphics<T> extends Application {
         }
     }
 
+
     public void showConnection() {
         Set<City> nodes = listGraph.getNodes(); // Hämtar alla noder
         Edge edge = listGraph.getEdgeBetween(place1, place2);
@@ -554,12 +524,12 @@ public class Graphics<T> extends Application {
         alert.showAndWait();
     }
 
+
     public void changeConnection() {
         Set<City> nodes = listGraph.getNodes(); // Hämtar alla noder
+        Edge edge = listGraph.getEdgeBetween(place1, place2);
 
         checkConnection();
-
-        Edge edge = listGraph.getEdgeBetween(place1, place2);
 
         // Visar ett fönster med uppgifter om förbindelsen.
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -587,30 +557,27 @@ public class Graphics<T> extends Application {
         alert.getDialogPane().setContent(vbox);
         Optional<ButtonType> result = alert.showAndWait();
 
-        if (result.isPresent() && result.get() == ButtonType.OK && !timeField.getText().isEmpty()) { // Om användaren
-                                                                                                     // klickat på OK
-                                                                                                     // och skrivit in
-                                                                                                     // ny tid
+        if (result.isPresent() && result.get() == ButtonType.OK && !timeField.getText().isEmpty()) { 
+            // Om användaren klickat på OK och skrivit in ny tid
             listGraph.setConnectionWeight(place1, place2, Integer.parseInt(timeField.getText()));
-            listGraph.setConnectionWeight(place2, place2, Integer.parseInt(timeField.getText())); // Grafen är riktad så
-                                                                                                  // måste sätta vikten
-                                                                                                  // åt båda hållen
+            listGraph.setConnectionWeight(place2, place2, Integer.parseInt(timeField.getText())); 
             hasSaved = false;
         } else if (result.isPresent() && result.get() == ButtonType.OK && timeField.getText().isEmpty()) {
             showError("You have to write a new time!");
         }
     }
 
+
     private void checkConnection() {
         if (place1 == null || place2 == null) { // Om det inte finns två markerade platser i kartan visas felmeddelande
             showError("Error: Select two cities.");
             return;
-        } else if (!listGraph.pathExists(place1, place2)) { // Om det inte finns förbindelse mellan platserna visas
-                                                            // felmeddelande
+        } else if (!listGraph.pathExists(place1, place2)) { // Om det inte finns förbindelse mellan platserna visas felmeddelande
             showError("Error: No connection between citites.");
             return;
         }
     }
+
 
     private void showError(String errorMessage) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -620,10 +587,40 @@ public class Graphics<T> extends Application {
         alert.showAndWait();
     }
 
+
     private void createLine(City a, City b){
         Line connectionLine = new Line(a.getX(), a.getY(), b.getX(), b.getY());
         connectionLine.setStroke(Color.BLACK);
         connectionLine.setStrokeWidth(3.0);
         imagePane.getChildren().add(connectionLine);
+    }
+
+    private void checkUnsavedChanges(){
+        if (hasSaved == false) {
+            // Visa dialogruta för att fråga användaren om personen vill spara ändringarna
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Warning");
+            alert.setHeaderText("Unsaved changes, continue anyways?");
+
+            ButtonType okButton = new ButtonType("OK");
+            ButtonType cancelButton = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
+
+            alert.getButtonTypes().setAll(okButton, cancelButton); // sätter alla knappar i dialogfönstret tog bort saveButton härifrån
+
+            Optional<ButtonType> result = alert.showAndWait(); 
+            // väntar med att sätta knapp typen tills användare trycker på någon, rätt häftigt ändå
+
+            switch (result.get().getText()) {
+                // spara de osparade ändringarna
+                case "Spara":
+                    save();
+                    break;
+                case "OK":
+                    // förkasta de osparade ändringarna och det nya "dokumentet" öppnas
+                default:
+                    // avbryt
+                    return;
+            }
+        }
     }
 }
