@@ -221,21 +221,21 @@ public class Graphics<T> extends Application {
 
     private void save() {
         try {
-            String filePath = "europa.graph"; //Referens till filen vi ska skriva till
-            PrintWriter writer = new PrintWriter(new FileWriter(filePath)); //Skapar ny med filePath
-            writer.println("file:" + imageUrl); //Skriver ut url:en
-            StringBuilder sb = new StringBuilder(); //Skapar stringBuilder som är tom just nu
+            String filePath = "europa.graph"; // Referens till filen vi ska skriva till
+            PrintWriter writer = new PrintWriter(new FileWriter(filePath)); // Skapar ny med filePath
+            writer.println("file:" + imageUrl); // Skriver ut url:en
+            StringBuilder sb = new StringBuilder(); // Skapar stringBuilder som är tom just nu
 
-            Set<City> nodeSet = listGraph.getNodes(); ///Hämtar alla noder
-            for (City node : nodeSet){ //Går igenom varje nod i nod-Settet
+            Set<City> nodeSet = listGraph.getNodes(); /// Hämtar alla noder
+            for (City node : nodeSet) { // Går igenom varje nod i nod-Settet
                 sb.append(node.getName()).append(";").append(node.getX()).append(";").append(node.getY());
             }
-            writer.println(sb.toString()); //Skriver ut stringBuildern i filen
+            writer.println(sb.toString()); // Skriver ut stringBuildern i filen
 
             // //Hittar och skriver ut förbindelserna
 
-            for (City node : nodeSet){ //Går igenom varje stad.    Ex: Stockholm, London, Oslo
-                for (Object obj : listGraph.getEdgesFrom(node)){ //Går igenom alla dess kanter 
+            for (City node : nodeSet) { // Går igenom varje stad. Ex: Stockholm, London, Oslo
+                for (Object obj : listGraph.getEdgesFrom(node)) { // Går igenom alla dess kanter
                     Edge edge = (Edge) obj;
                     City destination = (City) edge.getDestination();
                     int weight = edge.getWeight();
@@ -251,8 +251,8 @@ public class Graphics<T> extends Application {
         }
     }
 
-
-    private void open() { // Övningsuppgift 4 använder en map för att konvertera String till Node, kanske behövs???
+    private void open() { // Övningsuppgift 4 använder en map för att konvertera String till Node, kanske
+                          // behövs???
         if (hasSaved == false) {
             // Visa dialogruta för att fråga användaren om personen vill spara ändringarna
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -266,10 +266,10 @@ public class Graphics<T> extends Application {
             ButtonType okButton = new ButtonType("OK");
             ButtonType cancelButton = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
 
-            alert.getButtonTypes().setAll(okButton, cancelButton); // sätter alla knappar i dialogfönstret //tog bort
+            alert.getButtonTypes().setAll(okButton, cancelButton); // sätter alla knappar i dialogfönstret tog bort
                                                                    // saveButton härifrån
 
-            Optional<ButtonType> result = alert.showAndWait(); // väntar med att sätta knapp typen tills användaren
+            Optional<ButtonType> result = alert.showAndWait(); // väntar med att sätta knapp typen tills användare
                                                                // trycker på någon, rätt häftigt ändå
 
             switch (result.get().getText()) {
@@ -285,44 +285,43 @@ public class Graphics<T> extends Application {
             }
         }
 
-        if (!hasSaved) { // Om användaren inte har sparad info så skicka felmeddelande
-            showError("No saved information!");
-        } else { // Annars öppna europa.graph
-            try {
-                FileReader file = new FileReader("europa.graph"); // Referens till filen
-                BufferedReader reader = new BufferedReader(file); // Läser in filen rad för rad
+        try {
+            FileReader file = new FileReader("europa.graph"); // Referens till filen
+            BufferedReader reader = new BufferedReader(file); // Läser in filen rad för rad
 
-                // Återskapar objekt från filen:
-                String line; // Tom sträng
-                reader.readLine(); // läser första raden file:europa.gif
-                reader.readLine(); // Läser andra raden med uppradningen av alla städer
-                // Alla rader efter detta ser ut ex: Stockholm;Oslo;Train;3
-                while ((line = reader.readLine()) != null) { // läser en rad i taget genom hela filen tills den tar slut
-                    String[] parts = line.split(";"); // Delar upp noderna genom ;
-                    T cityStart = (T) parts[0]; // Omvandlar String till T
-                    T cityEnd = (T) parts[1];
-                    String tag = parts[2];
-                    int weight = Integer.parseInt(parts[3]); // Omvandlar vikten från string till int
+            // Återskapar objekt från filen:
+            String line; // Tom sträng
+            reader.readLine(); // läser första raden file:europa.gif
+            reader.readLine(); // Läser andra raden med uppradningen av alla städer
+            // Alla rader efter detta ser ut ex: Stockholm;Oslo;Train;3
+            while ((line = reader.readLine()) != null) { // läser en rad i taget genom hela filen tills den tar slut
+                String[] parts = line.split(";"); // Delar upp noderna genom ;
+                T cityStart = (T) parts[0]; // Omvandlar String till T
+                T cityEnd = (T) parts[1];
+                String tag = parts[2];
+                int weight = Integer.parseInt(parts[3]); // Omvandlar vikten från string till int
 
-                    // Lägger till noderna i grafen
-                    listGraph.add(cityStart);
-                    listGraph.add(cityEnd);
+                // Lägger till noderna i grafen
+                listGraph.add(cityStart);
+                listGraph.add(cityEnd);
 
-                    // Skapar en koppling mellan dem
-                    listGraph.connect(cityStart, cityEnd, tag, weight);
-                }
-                file.close();
-                reader.close();
-            } catch (IOException e) {
-                throw new RuntimeException("Error: No such file found.");
+                // Gör allt det grafiska:
             }
+            file.close();
+            reader.close();
+        } catch (IOException e) {
+            throw new RuntimeException("Error: No such file found.");
         }
     }
 
     public void saveImage() {
         try {
-            WritableImage image = scene.snapshot(null); // skapar bild av scenen - snapshot kan bara vara WritableImage (som är en bildtyp för att representera bilder i minnet)
-            BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null); // bilden omvandlas till bufferedimage via swingFXUtils, vilket krävs pga imageio kan bara hantera bufferedimages
+            WritableImage image = scene.snapshot(null); // skapar bild av scenen - snapshot kan bara vara WritableImage
+                                                        // (som är en bildtyp för att representera bilder i minnet)
+            BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null); // bilden omvandlas till bufferedimage
+                                                                                 // via swingFXUtils, vilket krävs pga
+                                                                                 // imageio kan bara hantera
+                                                                                 // bufferedimages
             ImageIO.write(bufferedImage, "png", new File("capture.png")); // imageIO kan spara bilder i olika format
         } catch (IOException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR, "IO-error " + e.getMessage());
@@ -406,7 +405,7 @@ public class Graphics<T> extends Application {
 
     class PlaceClickHandler implements EventHandler<MouseEvent> {
         @Override
-        public void handle(MouseEvent event){
+        public void handle(MouseEvent event) {
             City place = (City) event.getSource();
 
             if (place.isSelected()) {
@@ -437,8 +436,7 @@ public class Graphics<T> extends Application {
                 showError("Two places must be selected!");
             } else if (!listGraph.pathExists(place1, place2)) {
                 showError("There is no path between these two places!");
-            }
-            else{
+            } else {
                 List<Edge<City>> listOfPath = listGraph.getPath(place1, place2);
 
                 Alert alrt = new Alert(AlertType.INFORMATION);
@@ -447,7 +445,7 @@ public class Graphics<T> extends Application {
                 String innehåll = "";
                 int totalWeight = 0;
 
-                for(Edge<City> nuvaranceEdge : listOfPath){
+                for (Edge<City> nuvaranceEdge : listOfPath) {
                     String destination = nuvaranceEdge.getDestination().getName();
                     String edgeName = nuvaranceEdge.getName();
                     int edgeWeight = nuvaranceEdge.getWeight();
@@ -557,7 +555,6 @@ public class Graphics<T> extends Application {
         alert.showAndWait();
     }
 
-
     public void changeConnection() {
         Set<City> nodes = listGraph.getNodes(); // Hämtar alla noder
 
@@ -591,19 +588,26 @@ public class Graphics<T> extends Application {
         alert.getDialogPane().setContent(vbox);
         Optional<ButtonType> result = alert.showAndWait();
 
-        if (result.isPresent() && result.get() == ButtonType.OK && !timeField.getText().isEmpty()) { //Om användaren klickat på OK och skrivit in ny tid
+        if (result.isPresent() && result.get() == ButtonType.OK && !timeField.getText().isEmpty()) { // Om användaren
+                                                                                                     // klickat på OK
+                                                                                                     // och skrivit in
+                                                                                                     // ny tid
             listGraph.setConnectionWeight(place1, place2, Integer.parseInt(timeField.getText()));
-            listGraph.setConnectionWeight(place2, place2, Integer.parseInt(timeField.getText())); //Grafen är riktad så måste sätta vikten åt båda hållen
-        } else if (result.isPresent() && result.get() == ButtonType.OK && timeField.getText().isEmpty()){
+            listGraph.setConnectionWeight(place2, place2, Integer.parseInt(timeField.getText())); // Grafen är riktad så
+                                                                                                  // måste sätta vikten
+                                                                                                  // åt båda hållen
+            hasSaved = false;
+        } else if (result.isPresent() && result.get() == ButtonType.OK && timeField.getText().isEmpty()) {
             showError("You have to write a new time!");
         }
     }
 
-    private void checkConnection(){
+    private void checkConnection() {
         if (place1 == null || place2 == null) { // Om det inte finns två markerade platser i kartan visas felmeddelande
             showError("Error: Select two cities.");
             return;
-        } else if (!listGraph.pathExists(place1, place2)) { // Om det inte finns förbindelse mellan platserna visas felmeddelande
+        } else if (!listGraph.pathExists(place1, place2)) { // Om det inte finns förbindelse mellan platserna visas
+                                                            // felmeddelande
             showError("Error: No connection between citites.");
             return;
         }
