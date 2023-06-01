@@ -476,7 +476,7 @@ public class Graphics<T> extends Application {
         vBox.getChildren().addAll(hBox1, hBox2); // skapar vbox som lägger hboxarna efter varandra vertikalt
         confirmation.getDialogPane().setContent(vBox); // lägger till vboxen i alert
 
-        confirmation.setHeaderText("Connection from " + place1.getName() + " till " + place2.getName());
+        confirmation.setHeaderText("Connection from " + place1.getName() + " to " + place2.getName());
 
         Label nameLabel = new Label("Name:");
         TextField nameField = new TextField();
@@ -518,67 +518,20 @@ public class Graphics<T> extends Application {
         Edge edge = listGraph.getEdgeBetween(place1, place2);
 
         checkConnection();
-
-        // Visar ett fönster med uppgifter om förbindelsen.
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Connection");
-        alert.setHeaderText("Connection from " + place1.getName() + " to " + place2.getName());
-
-        // Gör första HBox:en
-        Label name = new Label("Name: ");
-        TextField nameField = new TextField(edge.getName());
-        nameField.setEditable(false);
-        HBox hboxOne = new HBox(8); // sätter padding horisontellt
-        hboxOne.getChildren().addAll(name, nameField);
-
-        // Gör andra HBox:en
-        Label time = new Label("Time: ");
-        TextField timeField = new TextField(Integer.toString(edge.getWeight()));
-        timeField.setEditable(false);
-        HBox hboxTwo = new HBox(13);
-        hboxTwo.getChildren().addAll(time, timeField);
-
-        // Lägg till de i en VBox
-        VBox vbox = new VBox(10);
-        vbox.getChildren().addAll(hboxOne, hboxTwo);
-        vbox.setAlignment(Pos.CENTER);
-
-        alert.getDialogPane().setContent(vbox);
-        alert.showAndWait();
+        createConnectionAlert(null, false, false, null, null, null);
     }
 
 
     private void changeConnection() {
         Set<City> nodes = listGraph.getNodes(); // Hämtar alla noder
         Edge edge = listGraph.getEdgeBetween(place1, place2);
+        Alert alert = new Alert(AlertType.CONFIRMATION);
+        ButtonType buttonType = new ButtonType("CONFIRMATION");
+        Optional<ButtonType> result = Optional.of(buttonType);
+        TextField timeField = new TextField();
 
         checkConnection();
-
-        // Visar ett fönster med uppgifter om förbindelsen.
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Connection");
-        alert.setHeaderText("Connection from " + place1.getName() + " to " + place2.getName());
-
-        // Gör första HBox:en
-        Label name = new Label("Name: ");
-        TextField nameField = new TextField(edge.getName());
-        nameField.setEditable(false);
-        HBox hboxOne = new HBox(8); // sätter padding horisontellt
-        hboxOne.getChildren().addAll(name, nameField);
-
-        // Gör andra HBox:en
-        Label time = new Label("Time: ");
-        TextField timeField = new TextField();
-        HBox hboxTwo = new HBox(13);
-        hboxTwo.getChildren().addAll(time, timeField);
-
-        // Lägg till de i en VBox
-        VBox vbox = new VBox(10);
-        vbox.getChildren().addAll(hboxOne, hboxTwo);
-        vbox.setAlignment(Pos.CENTER);
-
-        alert.getDialogPane().setContent(vbox);
-        Optional<ButtonType> result = alert.showAndWait();
+        createConnectionAlert(alert, false, true, result, timeField, null);
 
         if (result.isPresent() && result.get() == ButtonType.OK && !timeField.getText().isEmpty()) { 
             // Om användaren klickat på OK och skrivit in ny tid
@@ -588,6 +541,51 @@ public class Graphics<T> extends Application {
         } else if (result.isPresent() && result.get() == ButtonType.OK && timeField.getText().isEmpty()) {
             showError("You have to write a new time!");
         }
+    }
+
+
+    private void createConnectionAlert(Alert alert, boolean nameInteractable, boolean timeInteractable, Optional<ButtonType> result, TextField timeField, TextField nameField){
+        Set<City> nodes = listGraph.getNodes(); // Hämtar alla noder
+        Edge edge = listGraph.getEdgeBetween(place1, place2);
+        
+        if (alert == null){
+            alert = new Alert(AlertType.CONFIRMATION);
+        } else if (result == null){
+            ButtonType buttonType = new ButtonType("CONFIRMATION");
+            result = Optional.of(buttonType);
+        } else if (timeField == null){
+            timeField = new TextField();
+        } else if (nameField == null){
+            nameField = new TextField(edge.getName());
+        }
+        
+
+        // Visar ett fönster med uppgifter om förbindelsen.
+        alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Connection");
+        alert.setHeaderText("Connection from " + place1.getName() + " to " + place2.getName());
+    
+        // Gör första HBox:en
+        Label name = new Label("Name: ");
+        nameField = new TextField(edge.getName());
+        nameField.setEditable(nameInteractable);
+        HBox hboxOne = new HBox(8); // sätter padding horisontellt
+        hboxOne.getChildren().addAll(name, nameField);
+    
+        // Gör andra HBox:en
+        Label time = new Label("Time: ");
+        timeField = new TextField(Integer.toString(edge.getWeight()));
+        timeField.setEditable(timeInteractable);
+        HBox hboxTwo = new HBox(13);
+        hboxTwo.getChildren().addAll(time, timeField);
+    
+        // Lägg till de i en VBox
+        VBox vbox = new VBox(10);
+        vbox.getChildren().addAll(hboxOne, hboxTwo);
+        vbox.setAlignment(Pos.CENTER);
+    
+        alert.getDialogPane().setContent(vbox);
+        result = alert.showAndWait();
     }
 
 
