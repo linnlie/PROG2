@@ -38,7 +38,7 @@ public class Edge<T> {
     }
 
     public String toString(){
-        return "till " + this.destination + " med " + this.name + " tar " + this.weight;
+        return "to " + this.destination.toString() + " by " + this.name + " takes " + this.weight;
     }
 }
 

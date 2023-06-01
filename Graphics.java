@@ -185,6 +185,7 @@ public class Graphics<T> extends Application {
 
         switch (name) {
             case "Find Path":
+                findPath();
                 System.out.println("Find Path clicked");
                 break;
             case "Show Connection":
@@ -240,7 +241,6 @@ public class Graphics<T> extends Application {
 
     private void open() { // Övningsuppgift 4 använder en map för att konvertera String till Node, kanske behövs???
         checkUnsavedChanges();
-
 
         imagePane.getChildren().clear();
         placesList.clear();
@@ -588,6 +588,26 @@ public class Graphics<T> extends Application {
         } else if (result.isPresent() && result.get() == ButtonType.OK && timeField.getText().isEmpty()) {
             showError("You have to write a new time!");
         }
+    }
+
+
+    private void findPath(){
+        int weights = 0;
+        checkConnection();
+
+        Alert alert = new Alert(AlertType.INFORMATION);
+        alert.setHeaderText("The Path from " + place1.getName() + " to " + place2.getName() + ":");
+        StringBuilder sb = new StringBuilder();
+        List<Edge> edgesList = listGraph.getPath(place1, place2);
+
+        for(Edge edge : edgesList){
+            sb.append(edge.toString() + "\n");
+            weights += edge.getWeight();
+        }
+        sb.append("Total " + weights);
+
+        alert.setContentText(sb.toString());
+        alert.showAndWait();
     }
 
 
