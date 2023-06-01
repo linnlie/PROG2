@@ -42,6 +42,10 @@ public class Graphics<T> extends Application {
 
     private Pane imagePane;
     private CustomButton newPlaceButton;
+    private CustomButton findPathButton;
+    private CustomButton showConnectionButton;
+    private CustomButton newConnectionButton;
+    private CustomButton changeConnectionButton;
     private ArrayList<City> placesList = new ArrayList<>();
     private City place1;
     private City place2;
@@ -90,11 +94,11 @@ public class Graphics<T> extends Application {
 
         // lista med meny knappar
         buttons = List.of(
-            new CustomButton("Find Path", 0, 0),
-            new CustomButton("Show Connection", 0, 0),
+            findPathButton = ("Find Path", 0, 0),
+            showConnectionButton = ("Show Connection", 0, 0),
             newPlaceButton = new CustomButton("New Place", 0, 0),
-            new CustomButton("New Connection", 0, 0),
-            new CustomButton("Change Connection", 0, 0));
+            newConnectionButton = ("New Connection", 0, 0),
+            changeConnectionButton = ("Change Connection", 0, 0));
 
         buttonPane.getChildren().addAll(buttons); // lägger in knapparna i pane
 
@@ -237,6 +241,19 @@ public class Graphics<T> extends Application {
     private void open() { // Övningsuppgift 4 använder en map för att konvertera String till Node, kanske behövs???
         checkUnsavedChanges();
 
+
+        imagePane.getChildren().clear();
+        placeList.clear();
+        findPathButton.setDisable(false);
+        showConnectionButton.setDisable(false);
+        newPlaceButton.setDisable(false);
+        newConnectionButton.setDisable(false);
+        changeConnectionButton.setDisable(false);
+        place1 = null;
+        place2 = null;
+
+        changesSaved = false;
+
         try { //Återskapa objekt från sparade filen europa.graph
             Map<String, City> map = new HashMap<>(); //Namnet på staden är nyckeln
             FileReader file = new FileReader("europa.graph"); // Referens till filen
@@ -247,6 +264,7 @@ public class Graphics<T> extends Application {
             String url = fileParts[1];
             Image image = new Image(url);
             imageView.setImage(image);
+            imagePane.getChildren().add(imageView);
             imageLoaded = true;
 
             line = reader.readLine();// Läser andra raden med uppradningen av alla städer
@@ -258,8 +276,11 @@ public class Graphics<T> extends Application {
 
                 City city = new City(cityName, x ,y);
                 listGraph.add(city);
+                placesList.add(city);
                 map.put(cityName, city);
                 imagePane.getChildren().add(city);//Lägger till city i scenen
+                city.setId(cityName); 
+                //fortsätt här
             }
     
             // Alla rader efter detta ser ut ex: Stockholm;Oslo;Train;3
