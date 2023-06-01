@@ -35,10 +35,10 @@ public class Graphics<T> extends Application {
     private ImageView imageView;
     private String imageUrl = "europa.gif";
     private ListGraph listGraph = new ListGraph();
+    private TextField timeField;
     private TextField nameField;
     private boolean hasSaved = true;
     private Scene scene;
-    private Stage primaryStage;
 
     private Pane imagePane;
     private CustomButton newPlaceButton;
@@ -59,7 +59,6 @@ public class Graphics<T> extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        this.primaryStage = primaryStage;
         // lista med underrubriker för "file" menyn
         List<String> menuNamnen = List.of("New Map", "Open", "Save", "Save Image", "Exit");
         MenuBar menuBar = new MenuBar();
@@ -96,11 +95,19 @@ public class Graphics<T> extends Application {
         buttons = List.of(
             findPathButton = new CustomButton("Find Path", 0, 0),
             showConnectionButton = new CustomButton("Show Connection", 0, 0),
-            newPlaceButton = new CustomButton("New Place", 0, 0),
+            
             newConnectionButton = new CustomButton("New Connection", 0, 0),
             changeConnectionButton = new CustomButton("Change Connection", 0, 0));
 
-        buttonPane.getChildren().addAll(buttons); // lägger in knapparna i pane
+        newPlaceButton = new CustomButton("New Place", 0, 0);
+        buttonPane.getChildren().add(newPlaceButton);
+        newPlaceButton.setOnAction(new NewPlaceHandler());
+        newPlaceButton.setDisable(true);
+        buttonPane.getChildren().addAll(buttons);
+        
+        
+        
+        // lägger in knapparna i pane
 
         // här adderar jag en eventhandlar till varje separat knapp som är tillagd i
         // listan
@@ -153,6 +160,7 @@ public class Graphics<T> extends Application {
                         b.setDisable(false);
                     }
                     imagePane.getChildren().clear();
+                    newPlaceButton.setDisable(false);
                     hasSaved = false;
                 }
                 System.out.println("New Map menu item clicked!");
@@ -194,7 +202,7 @@ public class Graphics<T> extends Application {
                 break;
             case "New Place":
                 System.out.println("New Place print");
-                newPlaceButton.setOnAction(new NewPlaceHandler());
+                
                 break;
             case "New Connection":
                 newConnection();
@@ -245,10 +253,11 @@ public class Graphics<T> extends Application {
             }
 
             writer.close();
-            hasSaved = true;
+            
         } catch (IOException e) {
             throw new RuntimeException("Error: No such file found.");
         }
+        hasSaved = true;
     }
 
     private void open() { // Övningsuppgift 4 använder en map för att konvertera String till Node, kanske behövs???
@@ -292,7 +301,15 @@ public class Graphics<T> extends Application {
                 map.put(cityName, city);
                 imagePane.getChildren().add(city);//Lägger till city i scenen
                 city.setId(cityName); 
-                //fortsätt här
+                Label labelNewPlace = new Label(cityName);
+                labelNewPlace.setFont(Font.font("Verdana", FontWeight.SEMI_BOLD, 20));
+                labelNewPlace.setTextFill(Color.BLACK);
+                labelNewPlace.setLayoutX(x);
+                labelNewPlace.setLayoutY(y + 8);
+                imagePane.getChildren().add(labelNewPlace);
+                labelNewPlace.setDisable(true);
+                city.setOnMouseClicked(new PlaceClickHandler());
+                
             }
     
             // Alla rader efter detta ser ut ex: Stockholm;Oslo;Train;3
@@ -474,6 +491,15 @@ public class Graphics<T> extends Application {
             return;
         }
 
+        // Alert alert = new Alert(AlertType.CONFIRMATION);
+        // ButtonType buttonType = new ButtonType("CONFIRMATION");
+        // Optional<ButtonType> result = Optional.of(buttonType);
+        // timeField = new TextField();
+        // nameField = new TextField();
+
+        // createConnectionAlert(alert, true, true, result, timeField, nameField);
+        // System.out.println("createConnectionAlert");
+
         // skapar dialogrutan
         Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
         HBox hBox1 = new HBox(6); // skapar två hboxar (två "rader"), med padding mellan dess children (komponenter)
@@ -482,22 +508,24 @@ public class Graphics<T> extends Application {
         vBox.getChildren().addAll(hBox1, hBox2); // skapar vbox som lägger hboxarna efter varandra vertikalt
         confirmation.getDialogPane().setContent(vBox); // lägger till vboxen i alert
 
-        confirmation.setHeaderText("Connection from " + place1.getName() + " till " + place2.getName());
+        confirmation.setHeaderText("Connection from " + place1.getName() + " to " + place2.getName());
 
         Label nameLabel = new Label("Name:");
         TextField nameField = new TextField();
         hBox1.getChildren().addAll(nameLabel, nameField);
 
         Label timeLabel = new Label("Time:");
-        TextField timeField = new TextField();
+        timeField = new TextField();
         hBox2.getChildren().addAll(timeLabel, timeField);
 
         Optional<ButtonType> result = confirmation.showAndWait();
 
         // hantera användarens input på dialogrutan
         if (result.isPresent() && result.get().equals(ButtonType.CANCEL)) {
+            System.out.println("Klickar cancel");
             return;
         } else if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+            System.out.println("Inuti elseIf = klickat OK");
             String name = nameField.getText();
             String time = timeField.getText();
             if (name.isBlank() || name.isEmpty()) {
@@ -507,6 +535,7 @@ public class Graphics<T> extends Application {
                 showError("Time must be in numbers!");
                 return;
             } else {
+                System.out.println("Borde göra connection");
                 // lägger till förbindelsen i städernas sets via connect-metoden
                 listGraph.connect(place1, place2, name, Integer.valueOf(time));
 
@@ -519,71 +548,21 @@ public class Graphics<T> extends Application {
     }
 
     private void showConnection() {
-        Set<City> nodes = listGraph.getNodes(); // Hämtar alla noder
-        Edge edge = listGraph.getEdgeBetween(place1, place2);
-
         checkConnection();
-
-        // Visar ett fönster med uppgifter om förbindelsen.
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Connection");
-        alert.setHeaderText("Connection from " + place1.getName() + " to " + place2.getName());
-
-        // Gör första HBox:en
-        Label name = new Label("Name: ");
-        TextField nameField = new TextField(edge.getName());
-        nameField.setEditable(false);
-        HBox hboxOne = new HBox(8); // sätter padding horisontellt
-        hboxOne.getChildren().addAll(name, nameField);
-
-        // Gör andra HBox:en
-        Label time = new Label("Time: ");
-        TextField timeField = new TextField(Integer.toString(edge.getWeight()));
-        timeField.setEditable(false);
-        HBox hboxTwo = new HBox(13);
-        hboxTwo.getChildren().addAll(time, timeField);
-
-        // Lägg till de i en VBox
-        VBox vbox = new VBox(10);
-        vbox.getChildren().addAll(hboxOne, hboxTwo);
-        vbox.setAlignment(Pos.CENTER);
-
-        alert.getDialogPane().setContent(vbox);
-        alert.showAndWait();
+        createConnectionAlert(null, false, false, null, timeField, null);
     }
 
 
     private void changeConnection() {
-        Set<City> nodes = listGraph.getNodes(); // Hämtar alla noder
-        Edge edge = listGraph.getEdgeBetween(place1, place2);
-
         checkConnection();
 
-        // Visar ett fönster med uppgifter om förbindelsen.
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Connection");
-        alert.setHeaderText("Connection from " + place1.getName() + " to " + place2.getName());
+        Edge edge = listGraph.getEdgeBetween(place1, place2);
+        Alert alert = new Alert(AlertType.CONFIRMATION);
+        ButtonType buttonType = new ButtonType("CONFIRMATION");
+        Optional<ButtonType> result = Optional.of(buttonType);
+        timeField = new TextField(Integer.toString(edge.getWeight()));
 
-        // Gör första HBox:en
-        Label name = new Label("Name: ");
-        TextField nameField = new TextField(edge.getName());
-        nameField.setEditable(false);
-        HBox hboxOne = new HBox(8); // sätter padding horisontellt
-        hboxOne.getChildren().addAll(name, nameField);
-
-        // Gör andra HBox:en
-        Label time = new Label("Time: ");
-        TextField timeField = new TextField();
-        HBox hboxTwo = new HBox(13);
-        hboxTwo.getChildren().addAll(time, timeField);
-
-        // Lägg till de i en VBox
-        VBox vbox = new VBox(10);
-        vbox.getChildren().addAll(hboxOne, hboxTwo);
-        vbox.setAlignment(Pos.CENTER);
-
-        alert.getDialogPane().setContent(vbox);
-        Optional<ButtonType> result = alert.showAndWait();
+        createConnectionAlert(alert, false, true, result, timeField, null);
 
         if (result.isPresent() && result.get() == ButtonType.OK && !timeField.getText().isEmpty()) { 
             // Om användaren klickat på OK och skrivit in ny tid
@@ -592,7 +571,41 @@ public class Graphics<T> extends Application {
             hasSaved = false;
         } else if (result.isPresent() && result.get() == ButtonType.OK && timeField.getText().isEmpty()) {
             showError("You have to write a new time!");
+        } else if (!timeField.getText().matches("\\d+")) { // ifall strängen inte bara innehåller siffror
+            showError("Time must be in numbers!");
         }
+    }
+
+
+    private void createConnectionAlert(Alert alert, boolean nameInteractable, boolean timeInteractable, Optional<ButtonType> result, TextField timeField, TextField nameField){
+        Edge edge = listGraph.getEdgeBetween(place1, place2);
+        
+        if (alert == null){
+            alert = new Alert(AlertType.CONFIRMATION);
+        } if (result == null){
+            ButtonType buttonType = new ButtonType("CONFIRMATION");
+            result = Optional.of(buttonType);
+        } if (nameField == null){
+            nameField = new TextField(edge.getName());
+        }
+        
+        HBox hBox1 = new HBox(6); // skapar två hboxar (två "rader"), med padding mellan dess children (komponenter)
+        HBox hBox2 = new HBox(12);
+        VBox vBox = new VBox(5);
+        vBox.getChildren().addAll(hBox1, hBox2); // skapar vbox som lägger hboxarna efter varandra vertikalt
+        alert.getDialogPane().setContent(vBox); // lägger till vboxen i alert
+
+        alert.setHeaderText("Connection from " + place1.getName() + " to " + place2.getName());
+
+        Label nameLabel = new Label("Name:");
+        nameField.setEditable(nameInteractable);
+        hBox1.getChildren().addAll(nameLabel, nameField);
+
+        Label timeLabel = new Label("Time:");
+        timeField.setEditable(timeInteractable);
+        hBox2.getChildren().addAll(timeLabel, timeField);
+
+        result = alert.showAndWait();
     }
 
 
