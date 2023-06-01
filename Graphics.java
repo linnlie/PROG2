@@ -152,6 +152,7 @@ public class Graphics<T> extends Application {
                     for (CustomButton b : buttons) {
                         b.setDisable(false);
                     }
+                    imagePane.getChildren().clear();
                     hasSaved = false;
                 }
                 System.out.println("New Map menu item clicked!");
@@ -177,7 +178,6 @@ public class Graphics<T> extends Application {
                 break;
         }
     }
-
 
     private void handleButtons(ActionEvent event) {
         CustomButton button = (CustomButton) event.getSource();
@@ -205,7 +205,6 @@ public class Graphics<T> extends Application {
                 break;
         }
     }
-
 
     private void save() {
         try {
@@ -236,7 +235,6 @@ public class Graphics<T> extends Application {
             throw new RuntimeException("Error: No such file found.");
         }
     }
-
 
     private void open() { // Övningsuppgift 4 använder en map för att konvertera String till Node, kanske behövs???
         checkUnsavedChanges();
@@ -293,7 +291,7 @@ public class Graphics<T> extends Application {
 
                 City cityStart = map.get(cityStartName);
                 City cityEnd = map.get(cityEndName);
-
+                System.out.print(cityStartName + cityEndName);
                 createLine(cityStart, cityEnd);
             }
             file.close();
@@ -302,7 +300,6 @@ public class Graphics<T> extends Application {
             throw new RuntimeException("Error: No such file found.");
         }
     }
-
 
     private void saveImage() {
         try {
@@ -316,7 +313,6 @@ public class Graphics<T> extends Application {
             alert.showAndWait();
         }
     }
-
 
     private void exit(WindowEvent event) {
         if (hasSaved) {
@@ -346,7 +342,6 @@ public class Graphics<T> extends Application {
             imagePane.setOnMouseClicked(new MapClickHandler());
         }
     }
-
 
     private class MapClickHandler implements EventHandler<MouseEvent> {
         @Override
@@ -394,7 +389,6 @@ public class Graphics<T> extends Application {
         }
     }
 
-
     private class PlaceClickHandler implements EventHandler<MouseEvent> {
         @Override
         public void handle(MouseEvent event) {
@@ -418,7 +412,6 @@ public class Graphics<T> extends Application {
             }
         }
     }
-
 
     private class FindPathHandler implements EventHandler<ActionEvent> {
         @Override
@@ -453,7 +446,6 @@ public class Graphics<T> extends Application {
             }
         }
     }
-
 
     private void newConnection() {
         // ifall användaren ej valt två platser
@@ -511,7 +503,6 @@ public class Graphics<T> extends Application {
             }
         }
     }
-
 
     private void showConnection() {
         Set<City> nodes = listGraph.getNodes(); // Hämtar alla noder
@@ -600,7 +591,6 @@ public class Graphics<T> extends Application {
             return;
         }
     }
-
 
     private void showError(String errorMessage) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
