@@ -36,9 +36,9 @@ public class Graphics<T> extends Application {
     private String imageUrl = "europa.gif";
     private ListGraph listGraph = new ListGraph();
     private TextField timeField;
+    private TextField nameField;
     private boolean hasSaved = true;
     private Scene scene;
-    private Stage primaryStage;
 
     private Pane imagePane;
     private CustomButton newPlaceButton;
@@ -59,7 +59,6 @@ public class Graphics<T> extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        this.primaryStage = primaryStage;
         // lista med underrubriker för "file" menyn
         List<String> menuNamnen = List.of("New Map", "Open", "Save", "Save Image", "Exit");
         MenuBar menuBar = new MenuBar();
@@ -468,6 +467,15 @@ public class Graphics<T> extends Application {
             return;
         }
 
+        // Alert alert = new Alert(AlertType.CONFIRMATION);
+        // ButtonType buttonType = new ButtonType("CONFIRMATION");
+        // Optional<ButtonType> result = Optional.of(buttonType);
+        // timeField = new TextField();
+        // nameField = new TextField();
+
+        // createConnectionAlert(alert, true, true, result, timeField, nameField);
+        // System.out.println("createConnectionAlert");
+
         // skapar dialogrutan
         Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
         HBox hBox1 = new HBox(6); // skapar två hboxar (två "rader"), med padding mellan dess children (komponenter)
@@ -490,8 +498,10 @@ public class Graphics<T> extends Application {
 
         // hantera användarens input på dialogrutan
         if (result.isPresent() && result.get().equals(ButtonType.CANCEL)) {
+            System.out.println("Klickar cancel");
             return;
         } else if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+            System.out.println("Inuti elseIf = klickat OK");
             String name = nameField.getText();
             String time = timeField.getText();
             if (name.isBlank() || name.isEmpty()) {
@@ -501,6 +511,7 @@ public class Graphics<T> extends Application {
                 showError("Time must be in numbers!");
                 return;
             } else {
+                System.out.println("Borde göra connection");
                 // lägger till förbindelsen i städernas sets via connect-metoden
                 listGraph.connect(place1, place2, name, Integer.valueOf(time));
 
@@ -537,6 +548,8 @@ public class Graphics<T> extends Application {
             hasSaved = false;
         } else if (result.isPresent() && result.get() == ButtonType.OK && timeField.getText().isEmpty()) {
             showError("You have to write a new time!");
+        } else if (!timeField.getText().matches("\\d+")) { // ifall strängen inte bara innehåller siffror
+            showError("Time must be in numbers!");
         }
     }
 
