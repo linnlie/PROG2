@@ -215,19 +215,33 @@ public class Graphics<T> extends Application {
             StringBuilder sb = new StringBuilder(); // Skapar stringBuilder som är tom just nu
 
             Set<City> nodeSet = listGraph.getNodes(); /// Hämtar alla noder
+            System.out.println(nodeSet);
             for (City node : nodeSet) { // Går igenom varje nod i nod-Settet
                 sb.append(node.getName()).append(";").append(node.getX()).append(";").append(node.getY()).append(";");
             }
             writer.println(sb.toString()); // Skriver ut stringBuildern i filen
-
+            System.out.println(nodeSet);
+            System.out.println(listGraph.nodes);
             for (City node : nodeSet) { // Går igenom varje stad. Ex: Stockholm, London, Oslo
-                for (Object obj : listGraph.getEdgesFrom(node)) { // Går igenom alla dess kanter
-                    Edge edge = (Edge) obj;
-                    City destination = (City) edge.getDestination();
-                    int weight = edge.getWeight();
-                    String edgeName = edge.getName();
-                    writer.println(node.getName() + ";" + destination.getName() + ";" + edgeName + ";" + weight);
+                System.out.println(listGraph.getEdgesFrom(node));
+                if(listGraph.getEdgesFrom(node) != null && !nodeSet.isEmpty()) {
+                    for (Object obj : listGraph.getEdgesFrom(node)) { // Går igenom alla dess kanter
+                        Edge edge = (Edge) obj;
+                        System.out.println(edge);
+                        City destination = (City) edge.getDestination();
+                        System.out.println(destination);
+                        int weight = edge.getWeight();
+                        System.out.println(weight);
+
+                        String edgeName = edge.getName();
+                        System.out.println(edgeName);
+                        writer.println(node.getName() + ";" + destination.getName() + ";" + edgeName + ";" + weight);
+                        System.out.println("jag är i förbindelse for loopen");
+                    }
+                } else {
+                    System.out.println("im null");
                 }
+                System.out.println("hejsan");
             }
 
             writer.close();
@@ -291,7 +305,7 @@ public class Graphics<T> extends Application {
 
                 City cityStart = map.get(cityStartName);
                 City cityEnd = map.get(cityEndName);
-                System.out.print(cityStartName + cityEndName);
+                System.out.print(cityStartName + cityEndName); //kom ej in hit pga finns inga rader att läsa
                 createLine(cityStart, cityEnd);
             }
             file.close();

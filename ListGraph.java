@@ -7,7 +7,7 @@ import java.util.*;
 // Nora Wennerberg nowe9092
 
 public class ListGraph<T> implements Graph<T> {
-    private final Map<T, Set<Edge<T>>> nodes = new HashMap<T, Set<Edge<T>>>(); //Nyckeln är T, låser upp Set av kanter
+    public final Map<T, Set<Edge<T>>> nodes = new HashMap<T, Set<Edge<T>>>(); //Nyckeln är T, låser upp Set av kanter
 
     public void add(T city) {
         nodes.putIfAbsent(city, new HashSet<Edge<T>>());
