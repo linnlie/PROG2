@@ -516,10 +516,8 @@ public class Graphics<T> extends Application {
 
         // hantera användarens input på dialogrutan
         if (result.isPresent() && result.get().equals(ButtonType.CANCEL)) {
-            System.out.println("Klickar cancel");
             return;
         } else if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-            System.out.println("Inuti elseIf = klickat OK");
             String name = nameField.getText();
             String time = timeField.getText();
             if (name.isBlank() || name.isEmpty()) {
@@ -529,7 +527,6 @@ public class Graphics<T> extends Application {
                 showError("Time must be in numbers!");
                 return;
             } else {
-                System.out.println("Borde göra connection");
                 // lägger till förbindelsen i städernas sets via connect-metoden
                 listGraph.connect(place1, place2, name, Integer.valueOf(time));
 
@@ -553,16 +550,17 @@ public class Graphics<T> extends Application {
 
         Edge edge = listGraph.getEdgeBetween(place1, place2);
         Alert alert = new Alert(AlertType.CONFIRMATION);
-        ButtonType buttonType = new ButtonType("CONFIRMATION");
+        ButtonType buttonType = new ButtonType("OK", ButtonData.OK_DONE);
         Optional<ButtonType> result = Optional.of(buttonType);
         timeField = new TextField(Integer.toString(edge.getWeight()));
 
         createConnectionAlert(alert, false, true, result, timeField, null);
+        System.out.println(result);
 
-        if (result.isPresent() && result.get() == ButtonType.OK && !timeField.getText().isEmpty()) { 
+        if (result.isPresent() && result.get().equals(buttonType)) { //result.get() == ButtonType.OK  && !timeField.getText().isEmpty()
             // Om användaren klickat på OK och skrivit in ny tid
             listGraph.setConnectionWeight(place1, place2, Integer.parseInt(timeField.getText()));
-            listGraph.setConnectionWeight(place2, place2, Integer.parseInt(timeField.getText())); 
+            listGraph.setConnectionWeight(place2, place1, Integer.parseInt(timeField.getText())); 
             hasSaved = false;
         } else if (result.isPresent() && result.get() == ButtonType.OK && timeField.getText().isEmpty()) {
             showError("You have to write a new time!");

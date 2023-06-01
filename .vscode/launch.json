@@ -10,7 +10,7 @@
             "request": "launch",
             "mainClass": "Graphics",
             "projectName": "PROG2_33b57cfb",
-            "vmArgs": "--module-path \"/Users/linusleven/Desktop/javafx-sdk-20.0.1 2/lib\" --add-modules=javafx.controls,javafx.fxml"
+            "vmArgs": "--module-path \"/Users/norawennerberg/Documents/IntelliJ/javafx-sdk-20.0.1/lib\" --add-modules=javafx.controls,javafx.fxml"
         },
         {
             "type": "java",
@@ -18,14 +18,14 @@
             "request": "launch",
             "mainClass": "Graphics",
             "projectName": "PROG2_b3b3048f",
-            "vmArgs": "--module-path \"/Users/linusleven/Desktop/javafx-sdk-20.0.1 2/lib\" --add-modules=javafx.controls,javafx.fxml"
+            "vmArgs": "--module-path \"/Users/norawennerberg/Documents/IntelliJ/javafx-sdk-20.0.1/lib\" --add-modules=javafx.controls,javafx.fxml"
         },
         {
             "type": "java",
             "name": "Current File",
             "request": "launch",
             "mainClass": "${file}",
-            "vmArgs": "--module-path \"/Users/linusleven/Desktop/javafx-sdk-20.0.1 2/lib\" --add-modules=javafx.controls,javafx.fxml"
+            "vmArgs": "--module-path \"/Users/norawennerberg/Documents/IntelliJ/javafx-sdk-20.0.1/lib\" --add-modules=javafx.controls,javafx.fxml"
         },
         {
             "type": "java",
@@ -33,7 +33,7 @@
             "request": "launch",
             "mainClass": "I1",
             "projectName": "PROG2_b3b3048f",
-            "vmArgs": "--module-path \"/Users/linusleven/Desktop/javafx-sdk-20.0.1 2/lib\" --add-modules=javafx.controls,javafx.fxml"
+            "vmArgs": "--module-path \"/Users/norawennerberg/Documents/IntelliJ/javafx-sdk-20.0.1/libb\" --add-modules=javafx.controls,javafx.fxml"
         }
     ]
 }
