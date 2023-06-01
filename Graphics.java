@@ -35,7 +35,7 @@ public class Graphics<T> extends Application {
     private ImageView imageView;
     private String imageUrl = "europa.gif";
     private ListGraph listGraph = new ListGraph();
-    private TextField nameField;
+    private TextField timeField;
     private boolean hasSaved = true;
     private Scene scene;
     private Stage primaryStage;
@@ -483,7 +483,7 @@ public class Graphics<T> extends Application {
         hBox1.getChildren().addAll(nameLabel, nameField);
 
         Label timeLabel = new Label("Time:");
-        TextField timeField = new TextField();
+        timeField = new TextField();
         hBox2.getChildren().addAll(timeLabel, timeField);
 
         Optional<ButtonType> result = confirmation.showAndWait();
@@ -514,23 +514,20 @@ public class Graphics<T> extends Application {
 
 
     private void showConnection() {
-        Set<City> nodes = listGraph.getNodes(); // Hämtar alla noder
-        Edge edge = listGraph.getEdgeBetween(place1, place2);
-
         checkConnection();
-        createConnectionAlert(null, false, false, null, null, null);
+        createConnectionAlert(null, false, false, null, timeField, null);
     }
 
 
     private void changeConnection() {
-        Set<City> nodes = listGraph.getNodes(); // Hämtar alla noder
+        checkConnection();
+
         Edge edge = listGraph.getEdgeBetween(place1, place2);
         Alert alert = new Alert(AlertType.CONFIRMATION);
         ButtonType buttonType = new ButtonType("CONFIRMATION");
         Optional<ButtonType> result = Optional.of(buttonType);
-        TextField timeField = new TextField();
+        timeField = new TextField(Integer.toString(edge.getWeight()));
 
-        checkConnection();
         createConnectionAlert(alert, false, true, result, timeField, null);
 
         if (result.isPresent() && result.get() == ButtonType.OK && !timeField.getText().isEmpty()) { 
@@ -545,46 +542,33 @@ public class Graphics<T> extends Application {
 
 
     private void createConnectionAlert(Alert alert, boolean nameInteractable, boolean timeInteractable, Optional<ButtonType> result, TextField timeField, TextField nameField){
-        Set<City> nodes = listGraph.getNodes(); // Hämtar alla noder
         Edge edge = listGraph.getEdgeBetween(place1, place2);
         
         if (alert == null){
             alert = new Alert(AlertType.CONFIRMATION);
-        } else if (result == null){
+        } if (result == null){
             ButtonType buttonType = new ButtonType("CONFIRMATION");
             result = Optional.of(buttonType);
-        } else if (timeField == null){
-            timeField = new TextField();
-        } else if (nameField == null){
+        } if (nameField == null){
             nameField = new TextField(edge.getName());
         }
         
+        HBox hBox1 = new HBox(6); // skapar två hboxar (två "rader"), med padding mellan dess children (komponenter)
+        HBox hBox2 = new HBox(12);
+        VBox vBox = new VBox(5);
+        vBox.getChildren().addAll(hBox1, hBox2); // skapar vbox som lägger hboxarna efter varandra vertikalt
+        alert.getDialogPane().setContent(vBox); // lägger till vboxen i alert
 
-        // Visar ett fönster med uppgifter om förbindelsen.
-        alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Connection");
         alert.setHeaderText("Connection from " + place1.getName() + " to " + place2.getName());
-    
-        // Gör första HBox:en
-        Label name = new Label("Name: ");
-        nameField = new TextField(edge.getName());
+
+        Label nameLabel = new Label("Name:");
         nameField.setEditable(nameInteractable);
-        HBox hboxOne = new HBox(8); // sätter padding horisontellt
-        hboxOne.getChildren().addAll(name, nameField);
-    
-        // Gör andra HBox:en
-        Label time = new Label("Time: ");
-        timeField = new TextField(Integer.toString(edge.getWeight()));
+        hBox1.getChildren().addAll(nameLabel, nameField);
+
+        Label timeLabel = new Label("Time:");
         timeField.setEditable(timeInteractable);
-        HBox hboxTwo = new HBox(13);
-        hboxTwo.getChildren().addAll(time, timeField);
-    
-        // Lägg till de i en VBox
-        VBox vbox = new VBox(10);
-        vbox.getChildren().addAll(hboxOne, hboxTwo);
-        vbox.setAlignment(Pos.CENTER);
-    
-        alert.getDialogPane().setContent(vbox);
+        hBox2.getChildren().addAll(timeLabel, timeField);
+
         result = alert.showAndWait();
     }
 
