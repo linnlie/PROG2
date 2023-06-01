@@ -94,11 +94,11 @@ public class Graphics<T> extends Application {
 
         // lista med meny knappar
         buttons = List.of(
-            findPathButton = ("Find Path", 0, 0),
-            showConnectionButton = ("Show Connection", 0, 0),
+            findPathButton = new CustomButton("Find Path", 0, 0),
+            showConnectionButton = new CustomButton("Show Connection", 0, 0),
             newPlaceButton = new CustomButton("New Place", 0, 0),
-            newConnectionButton = ("New Connection", 0, 0),
-            changeConnectionButton = ("Change Connection", 0, 0));
+            newConnectionButton = new CustomButton("New Connection", 0, 0),
+            changeConnectionButton = new CustomButton("Change Connection", 0, 0));
 
         buttonPane.getChildren().addAll(buttons); // lägger in knapparna i pane
 
@@ -243,7 +243,7 @@ public class Graphics<T> extends Application {
 
 
         imagePane.getChildren().clear();
-        placeList.clear();
+        placesList.clear();
         findPathButton.setDisable(false);
         showConnectionButton.setDisable(false);
         newPlaceButton.setDisable(false);
@@ -252,7 +252,7 @@ public class Graphics<T> extends Application {
         place1 = null;
         place2 = null;
 
-        changesSaved = false;
+        hasSaved = false;
 
         try { //Återskapa objekt från sparade filen europa.graph
             Map<String, City> map = new HashMap<>(); //Namnet på staden är nyckeln
