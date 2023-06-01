@@ -1,4 +1,4 @@
 file:europa.gif
-London;246.0;360.5;Stockholm;470.0;241.5;
-London;Stockholm;Train;5
-Stockholm;London;Train;5
+Linn;295.0;386.5;Nora;467.0;241.5;
+Linn;Nora;Train;10
+Nora;Linn;Train;10
