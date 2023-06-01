@@ -96,11 +96,19 @@ public class Graphics<T> extends Application {
         buttons = List.of(
             findPathButton = new CustomButton("Find Path", 0, 0),
             showConnectionButton = new CustomButton("Show Connection", 0, 0),
-            newPlaceButton = new CustomButton("New Place", 0, 0),
+            
             newConnectionButton = new CustomButton("New Connection", 0, 0),
             changeConnectionButton = new CustomButton("Change Connection", 0, 0));
 
-        buttonPane.getChildren().addAll(buttons); // lägger in knapparna i pane
+        newPlaceButton = new CustomButton("New Place", 0, 0);
+        buttonPane.getChildren().add(newPlaceButton);
+        newPlaceButton.setOnAction(new NewPlaceHandler());
+        newPlaceButton.setDisable(true);
+        buttonPane.getChildren().addAll(buttons);
+        
+        
+        
+        // lägger in knapparna i pane
 
         // här adderar jag en eventhandlar till varje separat knapp som är tillagd i
         // listan
@@ -152,6 +160,7 @@ public class Graphics<T> extends Application {
                     for (CustomButton b : buttons) {
                         b.setDisable(false);
                     }
+                    newPlaceButton.setDisable(false);
                     hasSaved = false;
                 }
                 System.out.println("New Map menu item clicked!");
@@ -193,7 +202,7 @@ public class Graphics<T> extends Application {
                 break;
             case "New Place":
                 System.out.println("New Place print");
-                newPlaceButton.setOnAction(new NewPlaceHandler());
+                
                 break;
             case "New Connection":
                 newConnection();
@@ -231,10 +240,11 @@ public class Graphics<T> extends Application {
             }
 
             writer.close();
-            hasSaved = true;
+            
         } catch (IOException e) {
             throw new RuntimeException("Error: No such file found.");
         }
+        hasSaved = true;
     }
 
 
@@ -280,7 +290,15 @@ public class Graphics<T> extends Application {
                 map.put(cityName, city);
                 imagePane.getChildren().add(city);//Lägger till city i scenen
                 city.setId(cityName); 
-                //fortsätt här
+                Label labelNewPlace = new Label(cityName);
+                labelNewPlace.setFont(Font.font("Verdana", FontWeight.SEMI_BOLD, 20));
+                labelNewPlace.setTextFill(Color.BLACK);
+                labelNewPlace.setLayoutX(x);
+                labelNewPlace.setLayoutY(y + 8);
+                imagePane.getChildren().add(labelNewPlace);
+                labelNewPlace.setDisable(true);
+                city.setOnMouseClicked(new PlaceClickHandler());
+                
             }
     
             // Alla rader efter detta ser ut ex: Stockholm;Oslo;Train;3
