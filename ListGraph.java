@@ -185,5 +185,9 @@ public class ListGraph<T> implements Graph<T> {
 
         return path; //retunerar en länkad lista över den kortaste vägen :)
     }
+
+    public void resetNodes(){
+        nodes.clear();
+    }
 }
 
